@@ -233,6 +233,9 @@ class AvlTree {
 	    && isAVL(lson) && isAVL(rson);
     }
 
+    // TODO: add removing functions
+    // 		change the class to use the Compare class (you
+    // 		can't just include it and not use it...)
 public:
 
     AvlTree() : root(NULL) , left_most(NULL), size(0) {}
