@@ -1,0 +1,6 @@
+*.swp
+cscope.out
+avl_tree
+*.o
+prev_semester/*
+tags
