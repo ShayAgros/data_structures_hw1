@@ -1,4 +1,4 @@
-/*
+    /*
  *
  *
  * 	AVL tree
@@ -23,15 +23,16 @@ class AvlTree {
 	friend class AvlTree;
 
 	T data;
+	Compare compare;
 	Node *father;
 	Node *left_child, *right_child;
 	int height;
 
 
-	Node(const T& data,const Node& father) : data(data), father(father),
-	left_child(NULL), right_child(NULL), height(0)  {
+	Node(const T& data,const Node& father) : data(data), compare(), 
+	father(father), left_child(NULL), right_child(NULL), height(0)  {
 
-	    if(this->data <= father->data)
+	    if(compare(this->data, father->data))
 		father->left_child = this;
 	    else
 		father->right_child = this;
@@ -55,7 +56,7 @@ class AvlTree {
 	    this->father = father;
 
 	    if(father) {
-		if(this->data <= father->data)
+		if(compare(this->data, father->data))
 		    father->left_child = this;
 		else
 		    father->right_child = this;
@@ -71,14 +72,15 @@ class AvlTree {
 	}
 
 	bool operator<(const Node& node) {
-	    return (this->data < node.data);
+	    return compare(this->data, node.data);
 	}
 	bool operator>(const Node& node) {
-	    return (this->data > node.data);
+	    return compare ( node.data , this->data);
 	}
     };
 
     Node *root;
+    Compare compare;
     Node *left_most;
     int size;
 
@@ -225,8 +227,8 @@ class AvlTree {
 	height_diff =  abs(lheight - rheight) <= 1;
 
 	sizes = true;
-	sizes &= (lson)? lson->data <= node->data : true;
-	sizes &= (rson)? rson->data > node->data : true;
+	sizes &= (lson)? compare(lson->data, node->data) : true;
+	sizes &= (rson)? compare(node->data,rson->data) : true;
 
 
 	return heights && sizes  && height_diff
@@ -238,7 +240,7 @@ class AvlTree {
     // 		can't just include it and not use it...)
 public:
 
-    AvlTree() : root(NULL) , left_most(NULL), size(0) {}
+    AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
 
     ~AvlTree() {
 	free_vertices(root);
