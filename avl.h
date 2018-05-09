@@ -6,7 +6,7 @@
 
 #ifndef avl_d
 #define avl_d
-
+ 
 #include <iostream>
 #include <assert.h>
 
