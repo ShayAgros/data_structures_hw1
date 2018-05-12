@@ -83,6 +83,8 @@ namespace hw1 {
 		throw clanOrPlayerDoesntExist();
 	    } catch(clans_tree::NodeDoesntExist& exc) {
 		throw clanOrPlayerDoesntExist();
+	    } catch (playerAlreadyHasClan& exc) { 
+		throw playerAlreadyHasClan();
 	    } catch (...) {
 		std::cout << "Unexpected execption" << std::endl;
 		std::cout << "joinClan: playerID: " << playerID << " clanID: " << clanID << std::endl;

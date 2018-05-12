@@ -10,9 +10,10 @@ CFLAGS = -std=c++11 -g
 
 $(OUTPUT): main.cpp $(OBJ)
 	g++ $(CFLAGS) -o $@ $^
-	
-test: $(OBJ) avl_test.cpp
-	g++ $(CFLAGS) -o test_avl $^
+
+test: $(OBJ)
+	g++ $(CFLAGS) -o test_avl $^ avl_test.cpp
+	g++ $(CFLAGS) -o test_oasis $^ oasis_test.cpp
 
 .PHONY: clean
 clean:

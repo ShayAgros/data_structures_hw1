@@ -22,6 +22,9 @@ class Oasis {
 
     public:
 
+    	Oasis() : players_by_id(), players_by_coins(), best_player(NULL),
+		clans() {}
+
     	/* adds a player to the all_players
 	 * tree and updates best_player if it isn't defined
 	 * (can happen only if we add the first player)
@@ -44,17 +47,16 @@ class Oasis {
 	 */
 	void addClan(int clanID);
 
-    /* joinClan:
-     * add player to clan. Clan holds AVL tree of players in it
-     * this AVL tree is sorted by successes. Need to update
-     * player's data (set his\her clan num and pointer to the new
-     * clan and Node in 'clan' AVL tree
-     *
-     */
 	/* adds a player to clan.
 	 * @playerID - the player to be added the clan
 	 * @clanID - the clan's id
 	 *
+	 * Exceptions:
+	 * 	memoryAllocFailure - memory alloc failure
+	 *	clanOrPlayerDoesntExist - no clan or player with this
+	 *							id
+	 *	playerAlreadyHasClan - player already has a different
+	 *							clan
 	 */
 	void joinClan(int playerID, int clanID);
 
