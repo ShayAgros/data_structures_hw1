@@ -1,3 +1,9 @@
+/********************************************************
+ * 	The Main class which handle all operations in this
+ * 	homework
+ *	This class ASSUMES argument integrety
+ */
+
 #include "avl.h"
 #include "player.h"
 #include "clan.h"
@@ -7,25 +13,36 @@ namespace hw1 {
 
 class Oasis {
 
-    AvlTree<Player*,Player::Comp_by_coins> all_players;
+    AvlTree<Player*,Player::Comp_by_id> players_by_id;
+    AvlTree<Player*,Player::Comp_by_coins> players_by_coins;
+    Player* best_player;
     AvlTree<Clan*, Clan::Comp_by_id> clans;
-    
+
 
 
     public:
 
+    	/* adds a player to the all_players
+	 * tree and updates best_player if it isn't defined
+	 * (can happen only if we add the first player)
+	 *
+	 * @playerID - the new players ID
+	 * @initialCoins - players starting coins
+	 *
+	 * Exceptions:
+	 * 	memoryAllocFailure - memory alloc failure
+	 * 	playerExist - player already exists
+	 */
 	void addPlayer(int playerID,int initialCoins);
 
-    /*  addPlayer:
-     *  	need to add the player to players_by_id
-     *  	add him\her to players_by_successes
-     *  	and set his\her clan and coins to be 0
-     *
-     */
-
-    /* addClan
-     *	add clan to 'clans' tree
-     */
+	/* adds clan to 'clans' tree
+	 * @clanID - the new clan's id	
+	 *
+	 * Exceptions:
+	 * 	memoryAllocFailure - memory alloc failure
+	 * 	clanExists - clan already exists
+	 */
+	void addClan(int clanID);
 
     /* joinClan:
      * add player to clan. Clan holds AVL tree of players in it
@@ -34,6 +51,12 @@ class Oasis {
      * clan and Node in 'clan' AVL tree
      *
      */
+	/* adds a player to clan.
+	 * @playerID - the player to be added the clan
+	 * @clanID - the clan's id
+	 *
+	 */
+	void joinClan(int playerID, int clanID);
 
 
     /* completeChalange:
@@ -59,6 +82,14 @@ class Oasis {
      */
 
 
+/* TODO: check whether you need 'clanDoesntExist' and 'playerDoesntExist'*/
+    class playerExist{};
+    class playerDoesntExist{};
+    class clanExists{};
+    class clanDoesntExist{};
+    class clanOrPlayerDoesntExist{};
+    class playerAlreadyHasClan{};
+    class memoryAllocFailure{};
 };
 
 

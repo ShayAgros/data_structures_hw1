@@ -17,12 +17,14 @@ bool avlInsertTest () {
 	for (int i=1; i<=num_values;i++) {
 		try {
 			tree.insertNode(i);
-		} catch (AvlTree<int>::AVLNodeExists& ex) {
+		} catch (AvlTree<int>::NodeExists& ex) {
 		    return false;
 		} catch (...) {
 		    return false;
 		}
 	}
+	if( tree.getSize() != num_values)
+	    return false;
 
 	//std::cout << j << " values inserted" << std::endl;
 
@@ -30,7 +32,7 @@ bool avlInsertTest () {
 	    try {
 		tree.insertNode(i);
 		return false;
-	    } catch (AvlTree<int>::AVLNodeExists& ex) {
+	    } catch (AvlTree<int>::NodeExists& ex) {
 
 	    } catch (...) {
 		return false;
@@ -72,11 +74,44 @@ bool avlInsertTest () {
 	return true;
 }
 
+bool avlFindVal() {
+
+	AvlTree<int> tree;
+	const int num_values = 1200;
+
+	for (int i=1; i<=num_values;i++) {
+		try {
+			tree.insertNode(i);
+		} catch (AvlTree<int>::NodeExists& ex) {
+		    return false;
+		} catch (...) {
+		    return false;
+		}
+	}
+
+	for(int i=1; i<= 2*num_values ; i++) {
+	    try {
+		tree.findValCopyInTree(i);
+		
+		if( i>num_values)
+		    return false;
+	    } catch (AvlTree<int>::NodeDoesntExist& exc) {
+		if(i<=num_values)
+		    return false;
+	    } catch (...) {
+		return false;
+	    }
+
+	}
+
+	return true;
+}
 
 
 int main () {
 
 	RUN_TEST(avlInsertTest);
+	RUN_TEST(avlFindVal);
 
 	return 0;
 }

@@ -172,7 +172,7 @@ class AvlTree {
  * the function throws findNodeResult exception
  * if node doesn't exist
  * */
-    void findVal(Node *root,T val) {
+    Node* findVal(Node *root,T val) {
 
 	Node *father = NULL ,*current = root;
 
@@ -183,9 +183,10 @@ class AvlTree {
 	    else if( compare(val, current->data) ) // val < current.data
 		current = current->left_child;
 	    else /*value is already in tree*/
-		return;
+		return current;
 	}
 	throw findNodeResult(father);
+	return NULL;
     }
 
 /* The function correct the avl tree
@@ -237,26 +238,8 @@ class AvlTree {
 	    && isAVL(lson) && isAVL(rson);
     }
 
-    // TODO: add removing functions
-    // 		change the class to use the Compare class (you
-    // 		can't just include it and not use it...)
-public:
 
-    AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
-
-    ~AvlTree() {
-	free_vertices(root);
-    }
-
-    /* the function checks wheather the tree is empty */
-    bool isEmpty() const {
-	return (size == 0);
-    }
-
-    int getSize() const {
-	return size;
-    }
-
+    /* finds next node in an 'inorder' algorithm */
     Node *findNextOrderedNode(Node *node) {
 	Node* current = node;
 
@@ -284,7 +267,25 @@ public:
 	return (current) ? current->father : NULL;
     }
 
-    void insertNode(const T val) {
+    // TODO: add removing functions
+public:
+
+    AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
+
+    ~AvlTree() {
+	free_vertices(root);
+    }
+
+    /* the function checks wheather the tree is empty */
+    bool isEmpty() const {
+	return (size == 0);
+    }
+
+    int getSize() const {
+	return size;
+    }
+
+    void insertNode(const T& val) {
 
 	Node *father;
 
@@ -292,7 +293,7 @@ public:
 	    findVal(root,val);
 
 	    /*Node exists*/
-	    throw AVLNodeExists();
+	    throw NodeExists();
 	} catch(findNodeResult& ex) {
 	    father = ex.getFather();
 	}
@@ -322,6 +323,23 @@ public:
 	assert(isAVL(root) == true);
     }
 
+    /* finds a node whice has the value 'val'
+     * and returns a reference to it
+     *
+     * throws NodeDoesntExist if there is no
+     * such value in tree
+     */
+    T& findValCopyInTree(const T& val) {
+	try {
+	    Node* node = findVal(root,val);
+	    return node->data;
+
+	} catch(findNodeResult& ex) {
+	    /* value not found in tree */
+	    throw NodeDoesntExist();
+	}
+    }
+
     void printOrderedArray(ostream& os) {
 	Node* current = left_most;
 
@@ -340,7 +358,10 @@ public:
     friend ostream& operator<<(ostream& os,const AvlTree<K,C>& tree);
 
     // Exceptions TODO: check neccessity
-    class AVLNodeExists {};
+    class NodeExists {};
+    class NodeDoesntExist{};
+
+private:
     class findNodeResult {
 	friend class AvlTree;
 

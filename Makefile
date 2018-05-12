@@ -4,7 +4,7 @@ OUTPUT=avl_tree
 
 all: $(OUTPUT)
 
-OBJ= avl.h
+OBJ= avl.h oasis.cpp clan.cpp player.cpp
 
 CFLAGS = -std=c++11 -g
 
