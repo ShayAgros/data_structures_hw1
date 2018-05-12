@@ -176,12 +176,14 @@ class AvlTree {
 
 	Node *father = NULL ,*current = root;
 
-	while( !!current && current->data != val ) {
+	while(!!current) {
 	    father = current;
-	    if(current->data < val)
+	    if(compare(current->data, val)) // val > current.data
 		current = current->right_child;
-	    else
+	    else if( compare(val, current->data) ) // val < current.data
 		current = current->left_child;
+	    else /*value is already in tree*/
+		return;
 	}
 	throw findNodeResult(father);
     }
@@ -289,10 +291,8 @@ public:
 	try {
 	    findVal(root,val);
 
-	    /*
-	     * TODO: note already exists, do something about it
-	     */
-	    return;
+	    /*Node exists*/
+	    throw AVLNodeExists();
 	} catch(findNodeResult& ex) {
 	    father = ex.getFather();
 	}
@@ -315,7 +315,7 @@ public:
 	if(root->father)
 	    root = root->father;
 
-	if( val < left_most->data)
+	if(compare(val, left_most->data))
 	    left_most = new_node;
 
 	/*for debugging puposes, checking that the tree is still avl*/
@@ -330,7 +330,7 @@ public:
 	    if( i > 0)
 		current = findNextOrderedNode(current);
 	    assert(current != NULL);
-	    os << current->data << "(" << current->height << ") ";
+	    os << current->data << " ";
 	}
 
 

@@ -9,10 +9,11 @@ int main(int argc, char **argv) {
     	AvlTree<int> tree;
 
 
-	for (int i = 0; i<5; i++)
+	for (int i = 0; i<100; i++)
 	    tree.insertNode(i);
 
-	for(int i=10; i>5;i--)
+	for(int i=200; i>101;i--)
+
 	    tree.insertNode(i);
 
 	cout << tree << std::endl;

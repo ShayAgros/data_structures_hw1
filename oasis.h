@@ -1,17 +1,20 @@
 #include "avl.h"
+#include "player.h"
+#include "clan.h"
 
 
 namespace hw1 {
 
 class Oasis {
 
-    AvlTree players_by_successe; // you need to get the name shorter. Needed to return player with most successes
-    AvlTree players_by_id; // need shorter name, needed to check it player already exists in addPlayer
-    AvlTree clans;
+    AvlTree<Player*,Player::Comp_by_coins> all_players;
+    AvlTree<Clan*, Clan::Comp_by_id> clans;
+    
 
 
     public:
 
+	void addPlayer(int playerID,int initialCoins);
 
     /*  addPlayer:
      *  	need to add the player to players_by_id

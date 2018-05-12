@@ -1,14 +1,19 @@
 # makefile for test environment
 
-all: avl_tree
+OUTPUT=avl_tree
 
-OBJ= $(wildcard *.cpp)
+all: $(OUTPUT)
 
-CFLAGS = -std=c++11
+OBJ= avl.h
 
-avl_tree: avl.h $(OBJ)
-	g++ $(CFLAGS) -o $@ $(OBJ)
+CFLAGS = -std=c++11 -g
+
+$(OUTPUT): main.cpp $(OBJ)
+	g++ $(CFLAGS) -o $@ $^
+	
+test: $(OBJ) avl_test.cpp
+	g++ $(CFLAGS) -o test_avl $^
 
 .PHONY: clean
 clean:
-	rm -f sim_main $(OBJ_GIVEN) $(OBJ_CORE)
+	rm -f $(OUTPUT) test.o
