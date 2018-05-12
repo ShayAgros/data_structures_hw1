@@ -60,6 +60,14 @@ class Oasis {
 	 */
 	void joinClan(int playerID, int clanID);
 
+	/* Unite two clans.
+	* @clanID1 -
+	* @clanID2 - 
+	*
+	* Exceptions:
+	*/
+	void uniteClans(int clanID1, int clanID2);
+
 
     /* completeChalange:
      * 	removes player from players_by_successe tree and players_by_id
@@ -92,7 +100,12 @@ class Oasis {
     class clanOrPlayerDoesntExist{};
     class playerAlreadyHasClan{};
     class memoryAllocFailure{};
-};
+	class InvalidInput {};
+
+	private:
+		static Player* MergeArrays(Player* first_array, int size_first,
+			Player* second_array, int size_second);
+}; // class oasis
 
 
 } // end namespace

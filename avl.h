@@ -38,6 +38,9 @@ class AvlTree {
 		father->right_child = this;
 	}
 
+	Node() : data(data), father(NULL),
+		left_child(NULL), right_child(NULL), height(0) { }
+
 	Node(const T& data) : data(data), father(NULL),
 	left_child(NULL), right_child(NULL), height(0) { }
 
@@ -77,6 +80,37 @@ class AvlTree {
 	bool operator>(const Node& node) {
 	    return compare ( node.data , this->data);
 	}
+	public:
+
+		Node* getLeftChild() {
+			return this->left_child;
+		}
+
+		void setLeftChild(Node* new_node) {
+			if (left_child != NULL) {
+				throw NodeExists();
+			}
+			left_child = new_node;
+		}
+
+		Node* getRightChild() {
+			return this->right_child;
+		}
+
+		void setRightChild(Node* new_node) {
+			if (right_child != NULL) {
+				throw NodeExists();
+			}
+			right_child = new_node;
+		}
+
+		T& getData() {
+			return this->data;
+		}
+
+		void setData(T& new_data) {
+			data = new_data;
+		}
     };
 
     Node *root;
@@ -272,6 +306,9 @@ public:
 
     AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
 
+	AvlTree(const AvlTree& avlTree) : root(avlTree.root), compare(avlTree.compare),
+		left_most(avlTree.left_most), size(avlTree.size) {}
+
     ~AvlTree() {
 	free_vertices(root);
     }
@@ -282,8 +319,19 @@ public:
     }
 
     int getSize() const {
-	return size;
+		return size;
     }
+
+	Node* getRoot() {
+		return root;
+	}
+
+	void setRoot(Node* new_root) {
+		if (root != NULL) {
+			throw RootNodeExists();
+		}
+		root = new_root;
+	}
 
     void insertNode(const T& val) {
 
@@ -332,7 +380,7 @@ public:
     T& findValCopyInTree(const T& val) {
 	try {
 	    Node* node = findVal(root,val);
-	    return node->data;
+	    return node->getData();
 
 	} catch(findNodeResult& ex) {
 	    /* value not found in tree */
@@ -357,9 +405,133 @@ public:
     template <typename K,typename C>
     friend ostream& operator<<(ostream& os,const AvlTree<K,C>& tree);
 
+
+	// Recursively inserts an array into a tree <InOrder>
+	// Parameters -> 
+	//			*root - the root of the current sub tree
+	//			*node_array - the array we want to insert from
+	//			*index - a pointer to the current index of the array
+	//			*FieldFunc - the function that allows us to get the field of a value
+	//			*sum_fields - a pointer to the sum of all the fields of the current sub tree
+	//			*num_sons - a pointer to the num of sons in the curent sub tree
+	static void recursiveIntoTree(Node* root, T* array, int* index) {
+		if (root != NULL) {
+			recursiveToArray(root->getLeftChild(), array, index);
+			root->setData(array[*index]);
+			(*index)++;
+			recursiveToArray(root->getRightChild(), array, index);
+		}
+	}
+
+	// Inserts an array into a tree <InOrder>
+	// Parameters ->
+	//			*root - the root of the current sub tree
+	//			*node_array - the array we want to insert from
+	//			*FieldFunc - the func that allows us to get the field of a value.
+	static void ArrayToTree(AvlTree* tree, T* node_array) {
+		int size = tree->getSize();
+		int index, empty = 0;
+		if (size > 0) {
+			// The Function needs 2 int pointers, but the pointers have no
+			// meaning on first call
+			recursiveIntoTree(tree->getRoot, node_array, &index, &empty, &empty);
+		}
+	}
+
+	// Recursively inserts nodes into the array
+	// Parameters ->
+	//			*root - the root of the current sub_tree
+	//			*array - the array we want to insert into
+	//			*index - the index of the array we want to insert to
+	static void recursiveToArray(Node* root, T* array, int* index) {
+		if (root != NULL) {
+			recursiveToArray(root->getLeftChild(), array, index);
+			array[*index] = root->getData();
+			(*index)++;
+			recursiveToArray(root->getRightChild(), array, index);
+		}
+	}
+
+	// Inserts a tree's nodes into an array <InOrder>
+	// Parameters ->
+	//			*tree - the tree we want to turn into an array
+	// Returns ->
+	//			An array of the tree's nodes
+	//			Null if an allocation failed.
+	T* ToArray() {
+		int index = 0;
+		int size = getSize();
+		T* array = new T[size];
+		if (array == NULL) {
+			return NULL;
+		}
+		recursiveToArray(getRoot(), array, &index);
+		return array;
+	}
+
+	// Recursively build an empty tree
+	// Parameters ->
+	//			*root = the node we want to expand
+	//			*size = the size of the sub_tree, not including the root
+	static void recursiveEmptyTree(Node* root, int size) {
+		if (size > 0) {
+			int left_size = (size / 2);
+			if ((size % 2) == 1) {
+				left_size++;
+			}
+			int right_size = (size / 2);
+			Node* left_node = new Node();
+			if (left_node == NULL) {
+				throw AvlAllocationError();
+			}
+			root->setLeftChild(left_node);
+			recursiveEmptyTree(left_node, left_size - 1);
+			if (right_size > 0) {
+				Node* right_node = new Node();
+				if (right_node == NULL) {
+					throw AvlAllocationError();
+				}
+				root->setRightChild(right_node);
+				recursiveEmptyTree(right_node, right_size - 1);
+			}
+		}
+	}
+
+	// Creates a tree without any nodes
+	// Parameters ->
+	//			*size - the size of the new tree
+	//			*FieldFunc - the func that allows us to find the field of a value
+	// Returns ->
+	//			An empty Avl tree
+	//			Null if an allocation failed.
+	static AvlTree* BuildEmptyTree(int size) {
+		AvlTree* new_tree = new AvlTree();
+		if (new_tree == NULL) {
+			return NULL;
+		}
+		if (size > 0) {
+			Node* root = new Node();
+			if (root == NULL) {
+				delete(new_tree);
+				return NULL;
+			}
+			new_tree->setRoot(root);
+			try {
+				recursiveEmptyTree(new_tree->getRoot(), size - 1);
+			} catch (const RANKED_AVL_ALLOCATION_ERROR &) {
+				// delete(root);
+				delete(new_tree);
+				return NULL;
+			}
+		}
+		return new_tree;
+	}
+
     // Exceptions TODO: check neccessity
     class NodeExists {};
+	class RootNodeExists {};
     class NodeDoesntExist{};
+	class AvlAllocationError {};
 
 private:
     class findNodeResult {

@@ -8,10 +8,9 @@ namespace hw1 {
 	try {
 	    players_by_coins.insertNode(player);
 	    player->setClan((void*)this);
-
 	    if( !player_highest_score ||
 		    compare(player_highest_score, player)) { 
-		player_highest_score = player;
+			player_highest_score = player;
 	    }
 
 	} catch ( std::bad_alloc& ex ) {
@@ -24,6 +23,18 @@ namespace hw1 {
 
 
     }
+
+	int Clan::getNumOfPlayers() {
+		return players_by_coins.getSize();
+	}
+
+	Player* Clan::getBestPlayer() {
+		return player_highest_score;
+	}
+
+	AvlTree<Player*, Player::Comp_by_coins> Clan::getPlayers() {
+		return players_by_coins;
+	}
 
 
 } // end namespace

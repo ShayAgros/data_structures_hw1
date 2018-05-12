@@ -9,7 +9,7 @@ class Player {
 
     int id;
     int coins;
-    int score;
+    int num_of_challenges;
 
     // these fields will be of different types
     // but they need to have the player's clan id
@@ -19,10 +19,15 @@ class Player {
 
     public:
     Player(int id,int coins) : id(id) , coins(coins) ,
-    	score(0), clan_pointer(NULL) {}
+    	num_of_challenges(0), clan_pointer(NULL) {}
 
     Player(int id) : id(id) , coins(0) ,
-    	score(0), clan_pointer(NULL) {}
+    	num_of_challenges(0), clan_pointer(NULL) {}
+
+	// We need this default c'tor because the avl need it 
+	// (in order to build empty tree)
+	Player() : id(0), coins(0),
+		num_of_challenges(0), clan_pointer(NULL) {}
 
     /* returns a pointer to player's clan */
     void* getClan();
@@ -47,7 +52,7 @@ class Player {
     class Comp_by_score {
 	public:
 	bool operator() (Player *p1, Player *p2) {
-	    return ( p1->score < p2->score );
+	    return ( p1->num_of_challenges < p2->num_of_challenges );
 	}
 
     };
