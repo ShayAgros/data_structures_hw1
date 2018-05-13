@@ -19,7 +19,7 @@ class Player {
 
     public:
     Player(int id,int coins) : id(id) , coins(coins) ,
-    	num_of_challenges(0), clan_pointer(NULL) {}
+    	num_of_challenges(0), clan_pointer(NULL) {} 
 
     Player(int id) : id(id) , coins(0) ,
     	num_of_challenges(0), clan_pointer(NULL) {}
@@ -35,6 +35,10 @@ class Player {
     /* sets player's clan */
     void setClan(void *clan);
 
+	int getNumOfChallenges() {
+		return num_of_challenges;
+	}
+
 
 
     ~Player() = default;
@@ -43,9 +47,10 @@ class Player {
     class Comp_by_coins {
 	public:
 	bool operator() (Player *p1,Player *p2) {
-	    if (p1->coins == p2->coins)
-		return (p1->id < p2->id);
-	    return (p1->coins > p2->coins);
+		if (p1->coins == p2->coins) {
+			return (p1->id < p2->id);
+		}		
+	    return (p1->coins < p2->coins);
     	}
     };
 

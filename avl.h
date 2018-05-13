@@ -145,18 +145,18 @@ class AvlTree {
  *
  */
     void rotate_right(Node *node) {
-	Node *temp = node->left_child->right_child;
+		Node *temp = node->left_child->right_child;
 
-	node->left_child->set_father(node->father);
+		node->left_child->set_father(node->father);
 
-	node->father = node->left_child;
-	node->left_child->right_child = node;
+		node->father = node->left_child;
+		node->left_child->right_child = node;
 
-	node->left_child = temp;
-	if(temp) temp->father = node;
+		node->left_child = temp;
+		if(temp) temp->father = node;
 
-	node->update_height();
-	node->father->update_height();
+		node->update_height();
+		node->father->update_height();
     }
 
 /*	a		c
@@ -167,18 +167,18 @@ class AvlTree {
  *
  */
     void rotate_left(Node *node) {
-	Node *temp = node->right_child->left_child;
+		Node *temp = node->right_child->left_child;
 
-	node->right_child->set_father(node->father);
+		node->right_child->set_father(node->father);
 
-	node->father = node->right_child;
-	node->right_child->left_child = node;
+		node->father = node->right_child;
+		node->right_child->left_child = node;
 
-	node->right_child = temp;
-	if(temp) temp->father = node;
+		node->right_child = temp;
+		if(temp) temp->father = node;
 
-	node->update_height();
-	node->father->update_height();
+		node->update_height();
+		node->father->update_height();
     }
 
     void do_right_rotation(Node *node) {
@@ -275,31 +275,31 @@ class AvlTree {
 
     /* finds next node in an 'inorder' algorithm */
     Node *findNextOrderedNode(Node *node) {
-	Node* current = node;
+		Node* current = node;
 
-	if(!node)
-	    return NULL;
+		if(!node)
+			return NULL;
 
-	if(node->right_child) {
-	    current = current->right_child;
-	    while(current->left_child)
-		current = current->left_child;
+		if(node->right_child) {
+			current = current->right_child;
+			while(current->left_child)
+				current = current->left_child;
 
-	    return current;
+			return current;
+		}
+
+		/* TODO: is it needed? */
+		if( !node->father )
+			return NULL;
+
+		if(node->father->left_child == node)
+			return node->father;
+
+		/* we're the right child */
+		while(current && current->father && current->father->left_child != current)
+			current = current->father;
+		return (current) ? current->father : NULL;
 	}
-
-	/* TODO: is it needed? */
-	if( !node->father )
-	    return NULL;
-
-	if(node->father->left_child == node)
-	    return node->father;
-
-	/* we're the right child */
-	while(current && current->father && current->father->left_child != current)
-	    current = current->father;
-	return (current) ? current->father : NULL;
-    }
 
     // TODO: add removing functions
 public:
@@ -416,10 +416,10 @@ public:
 	//			*num_sons - a pointer to the num of sons in the curent sub tree
 	static void recursiveIntoTree(Node* root, T* array, int* index) {
 		if (root != NULL) {
-			recursiveToArray(root->getLeftChild(), array, index);
+			recursiveIntoTree(root->getLeftChild(), array, index);
 			root->setData(array[*index]);
 			(*index)++;
-			recursiveToArray(root->getRightChild(), array, index);
+			recursiveIntoTree(root->getRightChild(), array, index);
 		}
 	}
 
@@ -430,11 +430,9 @@ public:
 	//			*FieldFunc - the func that allows us to get the field of a value.
 	static void ArrayToTree(AvlTree* tree, T* node_array) {
 		int size = tree->getSize();
-		int index, empty = 0;
+		int index = 0;
 		if (size > 0) {
-			// The Function needs 2 int pointers, but the pointers have no
-			// meaning on first call
-			recursiveIntoTree(tree->getRoot, node_array, &index, &empty, &empty);
+			recursiveIntoTree(tree->getRoot(), node_array, &index);
 		}
 	}
 
@@ -463,7 +461,7 @@ public:
 		int size = getSize();
 		T* array = new T[size];
 		if (array == NULL) {
-			return NULL;
+			throw AvlAllocationError();
 		}
 		recursiveToArray(getRoot(), array, &index);
 		return array;
@@ -473,7 +471,8 @@ public:
 	// Parameters ->
 	//			*root = the node we want to expand
 	//			*size = the size of the sub_tree, not including the root
-	static void recursiveEmptyTree(Node* root, int size) {
+	static void recursiveEmptyTree(Node* root, int size, int height) {
+		root->height = height;
 		if (size > 0) {
 			int left_size = (size / 2);
 			if ((size % 2) == 1) {
@@ -483,16 +482,18 @@ public:
 			Node* left_node = new Node();
 			if (left_node == NULL) {
 				throw AvlAllocationError();
-			}
+			}			
 			root->setLeftChild(left_node);
-			recursiveEmptyTree(left_node, left_size - 1);
+			left_node->father = root;
+			recursiveEmptyTree(left_node, left_size - 1, height + 1);
 			if (right_size > 0) {
 				Node* right_node = new Node();
 				if (right_node == NULL) {
 					throw AvlAllocationError();
 				}
 				root->setRightChild(right_node);
-				recursiveEmptyTree(right_node, right_size - 1);
+				right_node->father = root;
+				recursiveEmptyTree(right_node, right_size - 1, height + 1);
 			}
 		}
 	}
@@ -507,21 +508,27 @@ public:
 	static AvlTree* BuildEmptyTree(int size) {
 		AvlTree* new_tree = new AvlTree();
 		if (new_tree == NULL) {
-			return NULL;
+			throw AvlAllocationError();
 		}
 		if (size > 0) {
 			Node* root = new Node();
 			if (root == NULL) {
 				delete(new_tree);
-				return NULL;
+				throw AvlAllocationError();
 			}
 			new_tree->setRoot(root);
+			new_tree->size = size;
 			try {
-				recursiveEmptyTree(new_tree->getRoot(), size - 1);
-			} catch (const RANKED_AVL_ALLOCATION_ERROR &) {
-				// delete(root);
+				recursiveEmptyTree(new_tree->getRoot(), size - 1, 0);
+				Node* left_most = new_tree->getRoot();
+				while (left_most->getLeftChild() != NULL) {
+					left_most = left_most->getLeftChild();
+				}
+				new_tree->left_most = left_most;
+			} catch (const AvlAllocationError &) {
+				delete(root);
 				delete(new_tree);
-				return NULL;
+				throw AvlAllocationError();
 			}
 		}
 		return new_tree;

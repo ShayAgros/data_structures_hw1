@@ -47,6 +47,18 @@ class Oasis {
 	 */
 	void addClan(int clanID);
 
+	/* adds clan to 'clans' tree
+	* @clanID - the new clan's id
+	* //TODO - add comments
+	* Exceptions:
+	* 	memoryAllocFailure - memory alloc failure
+	* 	clanExists - clan already exists
+	*/
+	void addClan(int clanID, Players_Tree& players_tree, Player* best_player);
+
+	//TODO - add comments
+	void removeClan(int clanID);
+
 	/* adds a player to clan.
 	 * @playerID - the player to be added the clan
 	 * @clanID - the clan's id
@@ -66,7 +78,8 @@ class Oasis {
 	*
 	* Exceptions:
 	*/
-	void uniteClans(int clanID1, int clanID2);
+	//TODO - fix comments
+	void uniteClans(int clan_id1, int clan_id2);
 
 
     /* completeChalange:
@@ -103,8 +116,18 @@ class Oasis {
 	class InvalidInput {};
 
 	private:
-		static Player* MergeArrays(Player* first_array, int size_first,
-			Player* second_array, int size_second);
+		// Sorts two arrays into one array
+		// Parameters->
+		//			*first_array - the first array to sort
+		//			*size_first = the size of the first array
+		//			*second_array - the second array to sort
+		//			*size_second = the size of the second array
+		// Returns ->
+		//			A sorted array made of the two given arrays.
+		//TODO - fix comments.
+		static Player** mergeArraysWithChallenges(Player** first_array,
+			int size_first, Player** second_array, int size_second,
+			int* merged_array_size);
 }; // class oasis
 
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "avl.h"
+#include "oasis.h"
 
 using hw1::AvlTree;
 using std::ostream;
@@ -112,6 +113,22 @@ int main () {
 
 	RUN_TEST(avlInsertTest);
 	RUN_TEST(avlFindVal);
+	hw1::Oasis oasis;
+	oasis.addClan(1);
+	oasis.addClan(2);
+	oasis.addClan(3);
+
+	oasis.addPlayer(10, 10);
+	oasis.addPlayer(11, 11);
+	oasis.addPlayer(12, 12);
+	oasis.addPlayer(13, 13);
+
+	oasis.joinClan(10, 1);
+	oasis.joinClan(11, 2);
+	oasis.joinClan(12, 1);
+	oasis.joinClan(13, 2);
+
+	oasis.uniteClans(1, 2);
 
 	return 0;
 }

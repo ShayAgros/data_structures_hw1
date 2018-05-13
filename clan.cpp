@@ -1,10 +1,8 @@
 #include "clan.h"
 
 namespace hw1 {
-
-    typedef AvlTree<Player*,Player::Comp_by_coins> players_tree;
-    void Clan::addPlayer(Player *player){
-
+    
+    void Clan::addPlayer(Player *player) {
 	try {
 	    players_by_coins.insertNode(player);
 	    player->setClan((void*)this);
@@ -15,7 +13,7 @@ namespace hw1 {
 
 	} catch ( std::bad_alloc& ex ) {
 	    throw memoryAllocFailure();
-	} catch (players_tree::NodeExists& exc) {
+	} catch (Players_Tree::NodeExists& exc) {
 	    /*this should never happen, putting assert to catch this*/
 	    bool player_already_in_clan_but_inserted_again = false;
 	    assert(player_already_in_clan_but_inserted_again);
@@ -32,7 +30,7 @@ namespace hw1 {
 		return player_highest_score;
 	}
 
-	AvlTree<Player*, Player::Comp_by_coins> Clan::getPlayers() {
+	Players_Tree& Clan::getPlayers() {
 		return players_by_coins;
 	}
 
