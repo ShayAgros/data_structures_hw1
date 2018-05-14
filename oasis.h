@@ -72,6 +72,17 @@ class Oasis {
 	 */
 	void joinClan(int playerID, int clanID);
 
+	/* We add coins to the player whose id is
+	 * playerID
+	 * @coins - the number of coins we want to add
+	 *
+	 * Exceptions:
+	 * 	memoryAllocFailure - memory alloc failure
+	 *	clanOrPlayerDoesntExist - there is no player
+	 *				by this id
+	 */
+	void completeChallenge(int playerID,int coins);
+
 	/* Unite two clans.
 	* @clanID1 -
 	* @clanID2 - 

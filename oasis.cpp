@@ -123,6 +123,40 @@ namespace hw1 {
 	    }
 	}
 
+	
+	void Oasis::completeChallenge(int playerID,int coins) {
+
+	    try {
+		Player player_to_search(playerID);
+		Player *player;
+		Clan *clan;
+
+		player = players_by_id.findValCopyInTree(&player_to_search);
+		clan = (Clan*)player->getClan();
+
+		players_by_coins.deleteNode(player);
+
+		if(clan)
+		    clan->updatePlayerCoins(player,coins);
+		else
+		    player->addCoins(coins);
+
+		players_by_coins.insertNode(player);
+
+		
+
+	    } catch ( std::bad_alloc& ex ) {
+		throw memoryAllocFailure();
+	    } catch(players_tree_by_id::NodeDoesntExist& exc) {
+		throw clanOrPlayerDoesntExist();
+	    }  catch (...) {
+		std::cout << "Unexpected execption" << std::endl;
+		std::cout << "completeChalange: playerID: " << playerID << " coins: " << coins << std::endl;
+		assert(false);
+	    }
+	}
+
+
 	void Oasis::uniteClans(int clan_id1, int clan_id2) {
 		Player** array1 = NULL;
 		Player** array2 = NULL;

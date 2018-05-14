@@ -35,11 +35,11 @@ class Player {
     /* sets player's clan */
     void setClan(void *clan);
 
-	int getNumOfChallenges() {
-		return num_of_challenges;
-	}
+    int getNumOfChallenges() {
+	return num_of_challenges;
+    }
 
-
+    void addCoins(int new_coins);
 
     ~Player() = default;
 
