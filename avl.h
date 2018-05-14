@@ -29,7 +29,7 @@ class AvlTree {
 	int height;
 
 
-	Node(const T& data,const Node& father) : data(data), compare(), 
+	Node(const T& data,const Node& father) : data(data), compare(),
 	father(father), left_child(NULL), right_child(NULL), height(0)  {
 
 	    if(compare(this->data, father->data))
@@ -38,7 +38,7 @@ class AvlTree {
 		father->right_child = this;
 	}
 
-	Node() : data(data), father(NULL),
+	Node() : data(), father(NULL),
 		left_child(NULL), right_child(NULL), height(0) { }
 
 	Node(const T& data) : data(data), father(NULL),
@@ -82,35 +82,35 @@ class AvlTree {
 	}
 	public:
 
-		Node* getLeftChild() {
-			return this->left_child;
-		}
+	Node* getLeftChild() {
+	    return this->left_child;
+	}
 
-		void setLeftChild(Node* new_node) {
-			if (left_child != NULL) {
-				throw NodeExists();
-			}
-			left_child = new_node;
-		}
+	void setLeftChild(Node* new_node) {
+	    if (left_child != NULL) {
+		throw NodeExists();
+	    }
+	    left_child = new_node;
+	}
 
-		Node* getRightChild() {
-			return this->right_child;
-		}
+	Node* getRightChild() {
+	    return this->right_child;
+	}
 
-		void setRightChild(Node* new_node) {
-			if (right_child != NULL) {
-				throw NodeExists();
-			}
-			right_child = new_node;
-		}
+	void setRightChild(Node* new_node) {
+	    if (right_child != NULL) {
+		throw NodeExists();
+	    }
+	    right_child = new_node;
+	}
 
-		T& getData() {
-			return this->data;
-		}
+	T& getData() {
+	    return this->data;
+	}
 
-		void setData(T& new_data) {
-			data = new_data;
-		}
+	void setData(T& new_data) {
+	    data = new_data;
+	}
     };
 
     Node *root;
@@ -145,18 +145,18 @@ class AvlTree {
  *
  */
     void rotate_right(Node *node) {
-		Node *temp = node->left_child->right_child;
+	Node *temp = node->left_child->right_child;
 
-		node->left_child->set_father(node->father);
+	node->left_child->set_father(node->father);
 
-		node->father = node->left_child;
-		node->left_child->right_child = node;
+	node->father = node->left_child;
+	node->left_child->right_child = node;
 
-		node->left_child = temp;
-		if(temp) temp->father = node;
+	node->left_child = temp;
+	if(temp) temp->father = node;
 
-		node->update_height();
-		node->father->update_height();
+	node->update_height();
+	node->father->update_height();
     }
 
 /*	a		c
@@ -167,18 +167,18 @@ class AvlTree {
  *
  */
     void rotate_left(Node *node) {
-		Node *temp = node->right_child->left_child;
+	Node *temp = node->right_child->left_child;
 
-		node->right_child->set_father(node->father);
+	node->right_child->set_father(node->father);
 
-		node->father = node->right_child;
-		node->right_child->left_child = node;
+	node->father = node->right_child;
+	node->right_child->left_child = node;
 
-		node->right_child = temp;
-		if(temp) temp->father = node;
+	node->right_child = temp;
+	if(temp) temp->father = node;
 
-		node->update_height();
-		node->father->update_height();
+	node->update_height();
+	node->father->update_height();
     }
 
     void do_right_rotation(Node *node) {
@@ -232,12 +232,12 @@ class AvlTree {
 	Node *head = node;
 
 	while (!!head) {
-	    	head->update_height();
-		if(head->find_height_diff() > 1)
-		    do_right_rotation(head);
-		else if( head->find_height_diff() < -1)
-		    do_left_rotation(head);
-		head = head->father;
+	    head->update_height();
+	    if(head->find_height_diff() > 1)
+		do_right_rotation(head);
+	    else if( head->find_height_diff() < -1)
+		do_left_rotation(head);
+	    head = head->father;
 	}
     }
 
@@ -275,39 +275,67 @@ class AvlTree {
 
     /* finds next node in an 'inorder' algorithm */
     Node *findNextOrderedNode(Node *node) {
-		Node* current = node;
+	Node* current = node;
 
-		if(!node)
-			return NULL;
+	if(!node)
+	    return NULL;
 
-		if(node->right_child) {
-			current = current->right_child;
-			while(current->left_child)
-				current = current->left_child;
+	if(node->right_child) {
+	    current = current->right_child;
+	    while(current->left_child)
+		current = current->left_child;
 
-			return current;
-		}
-
-		/* TODO: is it needed? */
-		if( !node->father )
-			return NULL;
-
-		if(node->father->left_child == node)
-			return node->father;
-
-		/* we're the right child */
-		while(current && current->father && current->father->left_child != current)
-			current = current->father;
-		return (current) ? current->father : NULL;
+	    return current;
 	}
 
-    // TODO: add removing functions
+	/* TODO: is it needed? */
+	if( !node->father )
+	    return NULL;
+
+	if(node->father->left_child == node)
+	    return node->father;
+
+	/* we're the right child */
+	while(current && current->father && current->father->left_child != current)
+	    current = current->father;
+	return (current) ? current->father : NULL;
+    }
+
+
+    Node *makeNodeALeaf(Node *node) {
+	Node *leaf_node;
+
+	if(!node->right_child && !node->left_child)
+	    return node;
+	else if(node->right_child && !node->left_child)
+	    leaf_node = node->right_child;
+	else if( !node->right_child && node->left_child)
+	    leaf_node = node->left_child;
+	else {
+	    leaf_node = findNextOrderedNode( node );
+	    T temp_ref = node->data;
+	    node->data = leaf_node->data;
+	    leaf_node->data = temp_ref;
+	    /*now leaf_node points to the node we want to remove*/
+	    return makeNodeALeaf(leaf_node);
+	}
+
+	// we can reach this section only if we had one son
+	leaf_node->set_father(node->father);
+
+	// if our node was root, we now have a new one
+	if(!node->father)
+	    root = leaf_node;
+
+	return node;
+    }
+
 public:
 
     AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
 
-	AvlTree(const AvlTree& avlTree) : root(avlTree.root), compare(avlTree.compare),
-		left_most(avlTree.left_most), size(avlTree.size) {}
+    AvlTree(const AvlTree& avlTree) : root(avlTree.root), compare(avlTree.compare),
+    	left_most(avlTree.left_most), size(avlTree.size) {}
 
     ~AvlTree() {
 	free_vertices(root);
@@ -319,19 +347,19 @@ public:
     }
 
     int getSize() const {
-		return size;
+	return size;
     }
 
-	Node* getRoot() {
-		return root;
-	}
+    Node* getRoot() {
+	return root;
+    }
 
-	void setRoot(Node* new_root) {
-		if (root != NULL) {
-			throw RootNodeExists();
-		}
-		root = new_root;
+    void setRoot(Node* new_root) {
+	if (root != NULL) {
+	    throw RootNodeExists();
 	}
+	root = new_root;
+    }
 
     void insertNode(const T& val) {
 
@@ -371,6 +399,44 @@ public:
 	assert(isAVL(root) == true);
     }
 
+
+    void deleteNode(const T& val) {
+	Node* node;	
+
+	try {
+	    node = findVal(root,val);
+	    if ( node->left_child || node->right_child)
+		node = makeNodeALeaf(node);
+
+	    if (node->father) {
+		if(node->father->left_child == node)
+		    node->father->left_child = NULL;
+		else if (node->father->right_child == node)
+		    node->father->right_child = NULL;
+	    }
+
+	    return_balance(node->father);
+	    if(root->father) root = root->father;
+
+	    delete node;
+
+	    size--;
+	    root = (size > 0) ? root : NULL;
+
+	    node = root;
+	    while (node && node->left_child)
+		node = node->left_child;
+	    left_most = node;
+	} catch(findNodeResult& ex) {
+	    /* value not found in tree */
+	    throw NodeDoesntExist();
+	}
+
+	/*for debugging puposes, checking that the tree is still avl*/
+	assert(isAVL(root) == true);
+    }
+
+
     /* finds a node whice has the value 'val'
      * and returns a reference to it
      *
@@ -402,143 +468,161 @@ public:
 
     }
 
+
+    // Recursively inserts an array into a tree <InOrder>
+    // Parameters ->
+    //			*root - the root of the current sub tree
+    //			*node_array - the array we want to insert from
+    //			*index - a pointer to the current index of the array
+    //			*FieldFunc - the function that allows us to get the field of a value
+    //			*sum_fields - a pointer to the sum of all the fields of the current sub tree
+    //			*num_sons - a pointer to the num of sons in the curent sub tree
+    static void recursiveIntoTree(Node* root, T* array, int* index) {
+	if (root != NULL) {
+	    recursiveIntoTree(root->getLeftChild(), array, index);
+	    root->setData(array[*index]);
+	    (*index)++;
+	    recursiveIntoTree(root->getRightChild(), array, index);
+	}
+    }
+
+    // Inserts an array into a tree <InOrder>
+    // Parameters ->
+    //			*root - the root of the current sub tree
+    //			*node_array - the array we want to insert from
+    //			*FieldFunc - the func that allows us to get the field of a value.
+    static void ArrayToTree(AvlTree* tree, T* node_array) {
+	int size = tree->getSize();
+	int index = 0;
+	if (size > 0) {
+	    recursiveIntoTree(tree->getRoot(), node_array, &index);
+	}
+    }
+
+    // Recursively inserts nodes into the array
+    // Parameters ->
+    //			*root - the root of the current sub_tree
+    //			*array - the array we want to insert into
+    //			*index - the index of the array we want to insert to
+    static void recursiveToArray(Node* root, T* array, int* index) {
+	if (root != NULL) {
+	    recursiveToArray(root->getLeftChild(), array, index);
+	    array[*index] = root->getData();
+	    (*index)++;
+	    recursiveToArray(root->getRightChild(), array, index);
+	}
+    }
+
+    // Inserts a tree's nodes into an array <InOrder>
+    // Parameters ->
+    //			*tree - the tree we want to turn into an array
+    // Returns ->
+    //			An array of the tree's nodes
+    //			Null if an allocation failed.
+    T* ToArray() {
+	int index = 0;
+	int size = getSize();
+	T* array;
+
+	try {
+	    array = new T[size];
+	    recursiveToArray(getRoot(), array, &index);
+	} catch ( std::bad_alloc& ex ) {
+	    throw AvlAllocationError();
+	}
+	return array;
+    }
+
+    // Recursively build an empty tree
+    // Parameters ->
+    //			*root = the node we want to expand
+    //			*size = the size of the sub_tree, not including the root
+    static void recursiveEmptyTree(Node* root, int size, int height) {
+	Node *left_node,*right_node;
+	int left_size,right_size ;
+
+	root->height = height;
+	if (size > 0) {
+	    left_size = (size / 2);
+	    if ((size % 2) == 1) {
+		left_size++;
+	    }
+	    right_size = (size / 2);
+
+	    try {
+		left_node = new Node();
+	    } catch( std::bad_alloc& ex ) {
+		throw AvlAllocationError();
+	    }
+	    root->setLeftChild(left_node);
+	    left_node->father = root;
+	    recursiveEmptyTree(left_node, left_size - 1, height + 1);
+	    if (right_size > 0) {
+		try {
+		    right_node = new Node();
+		} catch( std::bad_alloc& ex ) {
+		    throw AvlAllocationError();
+		}
+		root->setRightChild(right_node);
+		right_node->father = root;
+		recursiveEmptyTree(right_node, right_size - 1, height + 1);
+	    }
+	}
+    }
+
+    // Creates a tree without any nodes
+    // Parameters ->
+    //			*size - the size of the new tree
+    //			*FieldFunc - the func that allows us to find the field of a value
+    // Returns ->
+    //			An empty Avl tree
+    //			Null if an allocation failed.
+    static AvlTree* BuildEmptyTree(int size) {
+
+	AvlTree* new_tree;
+	try {
+	    new_tree = new AvlTree();
+	} catch( std::bad_alloc& ex ) {
+	    throw AvlAllocationError();
+	}
+
+	if (size > 0) {
+	    Node* root;
+	    try {
+		root = new Node();
+	    } catch( std::bad_alloc& ex ) {
+		delete(new_tree);
+		throw AvlAllocationError();
+	    }
+
+	    new_tree->setRoot(root);
+	    new_tree->size = size;
+	    try {
+		recursiveEmptyTree(new_tree->getRoot(), size - 1, 0);
+		Node* left_most = new_tree->getRoot();
+		while (left_most->getLeftChild() != NULL) {
+		    left_most = left_most->getLeftChild();
+		}
+		new_tree->left_most = left_most;
+	    } catch (AvlAllocationError& exc) {
+		delete(root);
+		delete(new_tree);
+		throw AvlAllocationError();
+	    }
+	}
+	return new_tree;
+    }
+
+
     template <typename K,typename C>
     friend ostream& operator<<(ostream& os,const AvlTree<K,C>& tree);
 
 
-	// Recursively inserts an array into a tree <InOrder>
-	// Parameters -> 
-	//			*root - the root of the current sub tree
-	//			*node_array - the array we want to insert from
-	//			*index - a pointer to the current index of the array
-	//			*FieldFunc - the function that allows us to get the field of a value
-	//			*sum_fields - a pointer to the sum of all the fields of the current sub tree
-	//			*num_sons - a pointer to the num of sons in the curent sub tree
-	static void recursiveIntoTree(Node* root, T* array, int* index) {
-		if (root != NULL) {
-			recursiveIntoTree(root->getLeftChild(), array, index);
-			root->setData(array[*index]);
-			(*index)++;
-			recursiveIntoTree(root->getRightChild(), array, index);
-		}
-	}
-
-	// Inserts an array into a tree <InOrder>
-	// Parameters ->
-	//			*root - the root of the current sub tree
-	//			*node_array - the array we want to insert from
-	//			*FieldFunc - the func that allows us to get the field of a value.
-	static void ArrayToTree(AvlTree* tree, T* node_array) {
-		int size = tree->getSize();
-		int index = 0;
-		if (size > 0) {
-			recursiveIntoTree(tree->getRoot(), node_array, &index);
-		}
-	}
-
-	// Recursively inserts nodes into the array
-	// Parameters ->
-	//			*root - the root of the current sub_tree
-	//			*array - the array we want to insert into
-	//			*index - the index of the array we want to insert to
-	static void recursiveToArray(Node* root, T* array, int* index) {
-		if (root != NULL) {
-			recursiveToArray(root->getLeftChild(), array, index);
-			array[*index] = root->getData();
-			(*index)++;
-			recursiveToArray(root->getRightChild(), array, index);
-		}
-	}
-
-	// Inserts a tree's nodes into an array <InOrder>
-	// Parameters ->
-	//			*tree - the tree we want to turn into an array
-	// Returns ->
-	//			An array of the tree's nodes
-	//			Null if an allocation failed.
-	T* ToArray() {
-		int index = 0;
-		int size = getSize();
-		T* array = new T[size];
-		if (array == NULL) {
-			throw AvlAllocationError();
-		}
-		recursiveToArray(getRoot(), array, &index);
-		return array;
-	}
-
-	// Recursively build an empty tree
-	// Parameters ->
-	//			*root = the node we want to expand
-	//			*size = the size of the sub_tree, not including the root
-	static void recursiveEmptyTree(Node* root, int size, int height) {
-		root->height = height;
-		if (size > 0) {
-			int left_size = (size / 2);
-			if ((size % 2) == 1) {
-				left_size++;
-			}
-			int right_size = (size / 2);
-			Node* left_node = new Node();
-			if (left_node == NULL) {
-				throw AvlAllocationError();
-			}			
-			root->setLeftChild(left_node);
-			left_node->father = root;
-			recursiveEmptyTree(left_node, left_size - 1, height + 1);
-			if (right_size > 0) {
-				Node* right_node = new Node();
-				if (right_node == NULL) {
-					throw AvlAllocationError();
-				}
-				root->setRightChild(right_node);
-				right_node->father = root;
-				recursiveEmptyTree(right_node, right_size - 1, height + 1);
-			}
-		}
-	}
-
-	// Creates a tree without any nodes
-	// Parameters ->
-	//			*size - the size of the new tree
-	//			*FieldFunc - the func that allows us to find the field of a value
-	// Returns ->
-	//			An empty Avl tree
-	//			Null if an allocation failed.
-	static AvlTree* BuildEmptyTree(int size) {
-		AvlTree* new_tree = new AvlTree();
-		if (new_tree == NULL) {
-			throw AvlAllocationError();
-		}
-		if (size > 0) {
-			Node* root = new Node();
-			if (root == NULL) {
-				delete(new_tree);
-				throw AvlAllocationError();
-			}
-			new_tree->setRoot(root);
-			new_tree->size = size;
-			try {
-				recursiveEmptyTree(new_tree->getRoot(), size - 1, 0);
-				Node* left_most = new_tree->getRoot();
-				while (left_most->getLeftChild() != NULL) {
-					left_most = left_most->getLeftChild();
-				}
-				new_tree->left_most = left_most;
-			} catch (const AvlAllocationError &) {
-				delete(root);
-				delete(new_tree);
-				throw AvlAllocationError();
-			}
-		}
-		return new_tree;
-	}
-
     // Exceptions TODO: check neccessity
     class NodeExists {};
-	class RootNodeExists {};
+    class RootNodeExists {};
     class NodeDoesntExist{};
-	class AvlAllocationError {};
+    class AvlAllocationError {};
 
 private:
     class findNodeResult {
