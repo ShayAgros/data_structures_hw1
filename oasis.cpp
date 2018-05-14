@@ -2,8 +2,8 @@
 
 namespace hw1 {
 
-    /*we shorten the name in order to save us some typing*/
-    typedef AvlTree<Player*,Player::Comp_by_id> players_tree_by_id;
+	/*we shorten the name in order to save us some typing*/
+	typedef AvlTree<Player*,Player::Comp_by_id> players_tree_by_id;
 	typedef AvlTree<Player*,Player::Comp_by_coins> players_tree_by_coins;
 	typedef AvlTree<Clan*, Clan::Comp_by_id> clans_tree;
 
@@ -59,6 +59,7 @@ namespace hw1 {
 	    }
 	}
 
+	// TODO: delete this abomination please
 	void Oasis::addClan(int clanID, Players_Tree& players_tree, Player* best_player) {
 		Clan *clan = NULL;
 
@@ -79,6 +80,7 @@ namespace hw1 {
 		}
 	}
 
+	/*TODO: this function should be static !*/
 	void Oasis::removeClan(int clanID) {
 		Clan clan_to_search(clanID);
 		Clan *clan;
@@ -158,9 +160,15 @@ namespace hw1 {
 			} else {
 				best_player = best_player1;
 			}
+			
+			// the +1 is here to avoid creating a zero
+			// size array
+			array1 = new Player*[ clan1->getNumOfPlayers() + 1];
+			array2 = new Player*[ clan2->getNumOfPlayers() + 1];
 
-			array1 = clan1->getPlayers().ToArray();
-			array2 = clan2->getPlayers().ToArray();
+			clan1->getPlayers().ToArray(array1);
+			clan2->getPlayers().ToArray(array2);
+
 
 			int united_clan_size;
 			Player** united_clan = 

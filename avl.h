@@ -519,18 +519,13 @@ public:
     // Returns ->
     //			An array of the tree's nodes
     //			Null if an allocation failed.
-    T* ToArray() {
+    void ToArray(T* array) {
 	int index = 0;
-	int size = getSize();
-	T* array;
+	
+	if( !array )
+	    return;
 
-	try {
-	    array = new T[size];
-	    recursiveToArray(getRoot(), array, &index);
-	} catch ( std::bad_alloc& ex ) {
-	    throw AvlAllocationError();
-	}
-	return array;
+	recursiveToArray(getRoot(), array, &index);
     }
 
     // Recursively build an empty tree
