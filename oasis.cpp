@@ -86,8 +86,8 @@ namespace hw1 {
 		Clan *clan;
 
 		clan = clans.findValCopyInTree(&clan_to_search);
-		//TODO - uncomment this.
-		//clans.removeNode(clandID)
+
+		clans.deleteNode(clan);
 		delete clan;
 	}
 
@@ -293,41 +293,38 @@ namespace hw1 {
 	}
 
 
-		Player player_to_search(playerID);
-		Clan clan_to_search(clanID);
-		Player *player;
-		Clan *clan;
-
-		player = players_by_id.findValCopyInTree(&player_to_search);
 
 	void Oasis::getBestPlayer(int clanID, int *playerID){
 		if(clanID < 0) {
-		 *playerID = best_player ? best_player->id : -1;
+		     *playerID = best_player ? best_player->getID() : -1;
 		} else { // Assumes clanID!=0 and that there is a clan with that ID.
 		   	Clan clan_to_search(clanID); 
 			Clan *clan;
 					
-			clan = clans->findValCopyInTree(clan_to_search);
+			clan = clans.findValCopyInTree(&clan_to_search);
 
 			Player* best = clan->getBestPlayer();
-			*playerID = best ? best-> : -1;
+			*playerID = best ? best->getID() : -1;
 		}
 	}
 
 	Oasis::~Oasis() {
-		Clan* all_clans[clans.getSize() +1];
-		Player* all_players[players_by_id.getSize() +1];
+		Clan** all_clans = new Clan*[clans.getSize() +1];
+		Player** all_players = new Player*[players_by_id.getSize() +1];
 		clans.ToArray(all_clans);
 		players_by_id.ToArray(all_players);
 
 		for(int i = 0; i < clans.getSize(); i++) 
 			delete all_clans[i];
-		for(int i = 0; i < all_players.getSize(); i++) 
+		for(int i = 0; i < players_by_coins.getSize(); i++) 
 			delete all_players[i];
+
+		delete[] all_clans;
+		delete[] all_players;
 	}
 
 	void Oasis::getScoreboard(int clanID, int **players, int *numOfPlayers) {
-		Player* board = NULL;
+		Player** board = NULL;
 		players_tree_by_coins *tree;
 		int size;
 
@@ -336,37 +333,34 @@ namespace hw1 {
 		    if(clanID < 0) {
 
 			tree = &players_by_coins;
-			
-			*players = board;
 
-			players_by_coins.ToArray(board);
-			*numOfPlayers = size;
-			return;
 		    } else {
 			Clan clan_to_search(clanID); 
 			Clan *team;
 					
-			team = &clans->findValCopyInTree(clan_to_search);
+			team = clans.findValCopyInTree(&clan_to_search);
 
-			tree = team->getPlayers();
+			tree = &team->getPlayers();
 		    }
 
 
 		    size = tree->getSize();
 		    if(size == 0) {
-			    *players = null;
+			    *players = NULL;
 			    *numOfPlayers = 0;
 			    return;
 		    }
 
-		    board = new Player*(size);
-		    *players = new int(size);
+		    board = new Player*[size];
+		    *players = new int[size];
 
 		    tree->ToArray(board);
 		    for(int i=0;i < size; i++)
 			(*players)[i] = board[i]->getID();
 
 		    *numOfPlayers = size;
+
+		    delete[] board;
 
 		} catch (std::bad_alloc& ex) {
 		    delete board;
