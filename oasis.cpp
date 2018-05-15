@@ -12,19 +12,21 @@ namespace hw1 {
 		try {
 		     player = new Player(playerID,initialCoins);
 
+
+		     players_by_id.insertNode(player);
+
 		     players_by_coins.insertNode(player);
 
 		     if(!best_player) /* we don't have players yet */
 			 best_player = player;
 
-		     players_by_id.insertNode(player);
-		} catch ( std::bad_alloc& ex ) {
+		} catch ( std::bad_alloc& exc ) {
 		    delete player;
 		    throw memoryAllocFailure();
-		} catch (players_tree_by_coins::NodeExists& exc) {
+		} catch(players_tree_by_id::NodeExists& exc) {
 		    delete player;
 		    throw playerExist();
-		} catch(players_tree_by_id::NodeExists& exc) {
+		} catch (players_tree_by_coins::NodeExists& exc) {
 		    delete player;
 		    // TODO: add removal of player from
 		    // 'players_by_coins' tree. This exception
@@ -46,7 +48,7 @@ namespace hw1 {
 			clan = new Clan(clanID);
 			clans.insertNode(clan);
 
-	    } catch ( std::bad_alloc& ex ) {
+	    } catch ( std::bad_alloc& exc ) {
 			delete clan;
 		throw memoryAllocFailure();
 	    } catch (clans_tree::NodeExists& exc) {
@@ -67,7 +69,7 @@ namespace hw1 {
 			clan = new Clan(clanID, players_tree, best_player);
 			clans.insertNode(clan);
 
-		} catch (std::bad_alloc& ex) {
+		} catch (std::bad_alloc& exc) {
 			delete clan;
 			throw memoryAllocFailure();
 		} catch (clans_tree::NodeExists& exc) {
@@ -108,7 +110,7 @@ namespace hw1 {
 		    clan->addPlayer(player);
 		}
 
-	    } catch ( std::bad_alloc& ex ) {
+	    } catch ( std::bad_alloc& exc ) {
 		throw memoryAllocFailure();
 	    } catch(players_tree_by_id::NodeDoesntExist& exc) {
 		throw clanOrPlayerDoesntExist();
@@ -124,7 +126,7 @@ namespace hw1 {
 	}
 
 	
-	void Oasis::completeChallenge(int playerID,int coins) {
+	void Oasis::completeChallange(int playerID,int coins) {
 
 	    try {
 		Player player_to_search(playerID);
@@ -143,7 +145,7 @@ namespace hw1 {
 
 		players_by_coins.insertNode(player);
 
-	    } catch ( std::bad_alloc& ex ) {
+	    } catch ( std::bad_alloc& exc ) {
 		throw memoryAllocFailure();
 	    } catch(players_tree_by_id::NodeDoesntExist& exc) {
 		throw clanOrPlayerDoesntExist();
@@ -154,6 +156,75 @@ namespace hw1 {
 	    }
 	}
 
+
+	void Oasis::getBestPlayer(int clanID, int *playerID){
+	    try {
+		if(clanID < 0) {
+		     *playerID = best_player ? best_player->getID() : -1;
+		} else {
+			Clan clan_to_search(clanID); 
+			Clan *clan;
+					
+			clan = clans.findValCopyInTree(&clan_to_search);
+
+			Player* best = clan->getBestPlayer();
+			*playerID = best ? best->getID() : -1;
+		}
+	    } catch(clans_tree::NodeDoesntExist& exc) {
+		throw clanOrPlayerDoesntExist();
+	    } catch (...) {
+		std::cout << "Unexpected execption" << std::endl;
+		std::cout << "getBestPlayer: clanID: " << clanID << std::endl;
+		assert(false);
+	    }
+	}
+
+
+	void Oasis::getScoreboard(int clanID, int **players, int *numOfPlayers) {
+		Player** board = NULL;
+		players_tree_by_coins *tree;
+		int size;
+
+		try { 
+		    if(clanID < 0) {
+			tree = &players_by_coins;
+		    } else {
+			Clan clan_to_search(clanID); 
+			Clan *team;
+			team = clans.findValCopyInTree(&clan_to_search);
+			tree = &team->getPlayers();
+		    }
+
+		    size = tree->getSize();
+		    if(size == 0) {
+			    *players = NULL;
+			    *numOfPlayers = 0;
+			    return;
+		    }
+
+		    board = new Player*[size];
+		    *players = new int[size];
+
+		    tree->ToArray(board);
+		    for(int i=0;i < size; i++)
+			(*players)[i] = board[i]->getID();
+
+		    *numOfPlayers = size;
+
+		    delete[] board;
+
+		} catch (std::bad_alloc& exc) {
+		    delete board;
+		    throw memoryAllocFailure();
+		} catch(players_tree_by_id::NodeDoesntExist& exc) {
+		    throw clanOrPlayerDoesntExist();
+		} catch (...) {
+		    std::cout << "Unexpected execption" << std::endl;
+		    std::cout << "getScoreBoard: clanID: " << clanID << std::endl;
+		    assert(false);
+		}
+
+	}
 
 	void Oasis::uniteClans(int clan_id1, int clan_id2) {
 		Player** array1 = NULL;
@@ -220,7 +291,7 @@ namespace hw1 {
 			delete[] array1;
 			delete[] array2;
 			delete[] united_clan;
-		} catch (std::bad_alloc& exx) {
+		} catch (std::bad_alloc& excx) {
 			throw memoryAllocFailure();
 		} catch (clans_tree::NodeDoesntExist& exc) {
 			throw clanDoesntExist();
@@ -232,11 +303,7 @@ namespace hw1 {
 				delete[] array2;
 			}
 			throw memoryAllocFailure();
-		} catch (memoryAllocFailure& ex) {
-			delete[] array1;
-			delete[] array2;
-			throw memoryAllocFailure();
-		} catch (...) {
+		}  catch (...) {
 			std::cout << "Unexpected execption" << std::endl;
 			std::cout << "uniteClan: clan_id1: " << clan_id1 << " clan_id2: " << clan_id2 << std::endl;
 			assert(false);
@@ -293,21 +360,6 @@ namespace hw1 {
 	}
 
 
-
-	void Oasis::getBestPlayer(int clanID, int *playerID){
-		if(clanID < 0) {
-		     *playerID = best_player ? best_player->getID() : -1;
-		} else { // Assumes clanID!=0 and that there is a clan with that ID.
-		   	Clan clan_to_search(clanID); 
-			Clan *clan;
-					
-			clan = clans.findValCopyInTree(&clan_to_search);
-
-			Player* best = clan->getBestPlayer();
-			*playerID = best ? best->getID() : -1;
-		}
-	}
-
 	Oasis::~Oasis() {
 		Clan** all_clans = new Clan*[clans.getSize() +1];
 		Player** all_players = new Player*[players_by_id.getSize() +1];
@@ -323,56 +375,5 @@ namespace hw1 {
 		delete[] all_players;
 	}
 
-	void Oasis::getScoreboard(int clanID, int **players, int *numOfPlayers) {
-		Player** board = NULL;
-		players_tree_by_coins *tree;
-		int size;
-
-		try { 
-			
-		    if(clanID < 0) {
-
-			tree = &players_by_coins;
-
-		    } else {
-			Clan clan_to_search(clanID); 
-			Clan *team;
-					
-			team = clans.findValCopyInTree(&clan_to_search);
-
-			tree = &team->getPlayers();
-		    }
-
-
-		    size = tree->getSize();
-		    if(size == 0) {
-			    *players = NULL;
-			    *numOfPlayers = 0;
-			    return;
-		    }
-
-		    board = new Player*[size];
-		    *players = new int[size];
-
-		    tree->ToArray(board);
-		    for(int i=0;i < size; i++)
-			(*players)[i] = board[i]->getID();
-
-		    *numOfPlayers = size;
-
-		    delete[] board;
-
-		} catch (std::bad_alloc& ex) {
-		    delete board;
-		    throw memoryAllocFailure();
-		} catch(players_tree_by_id::NodeDoesntExist& exc) {
-		    throw clanOrPlayerDoesntExist();
-		} catch (...) {
-		    std::cout << "Unexpected execption" << std::endl;
-		    std::cout << "getScoreBoard: clanID: " << clanID << std::endl;
-		    assert(false);
-		}
-
-	}
 
 } // end namespace

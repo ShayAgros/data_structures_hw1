@@ -68,7 +68,7 @@ StatusType completeChallange(void *DS,int playerID,int coins) {
 	oasis->completeChallange(playerID,coins);
     } catch (Oasis::memoryAllocFailure& exc) {
 	return ALLOCATION_ERROR;
-    } catch (Oasis::clanOrPlayerDoesntExist) {
+    } catch (Oasis::clanOrPlayerDoesntExist& exc) {
 	return FAILURE;
     }
 

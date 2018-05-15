@@ -82,7 +82,7 @@ class Oasis {
 	 *	clanOrPlayerDoesntExist - there is no player
 	 *				by this id
 	 */
-	void completeChallenge(int playerID,int coins);
+	void completeChallange(int playerID,int coins);
 
 	/* Unite two clans.
 	* @clanID1 -

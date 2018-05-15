@@ -52,7 +52,7 @@ class Player {
 		if (p1->coins == p2->coins) {
 			return (p1->id < p2->id);
 		}		
-	    return (p1->coins < p2->coins);
+	    return (p1->coins > p2->coins);
     	}
     };
 

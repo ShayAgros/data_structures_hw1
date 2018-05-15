@@ -1,14 +1,15 @@
 # makefile for test environment
 
-OUTPUT=avl_tree
+OUTPUT=oasis
 
 all: $(OUTPUT)
 
-OBJ= avl.h oasis.cpp clan.cpp player.cpp
+OBJ= avl.h oasis.cpp clan.cpp player.cpp \
+     library1.cpp
 
 CFLAGS = -std=c++11 -g
 
-$(OUTPUT): main.cpp $(OBJ)
+$(OUTPUT): main1.cpp $(OBJ)
 	g++ $(CFLAGS) -o $@ $^
 
 test: $(OBJ)
@@ -17,4 +18,4 @@ test: $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(OUTPUT) test.o
+	rm -f $(OUTPUT) test_avl test_oasis test.o
