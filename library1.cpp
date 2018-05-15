@@ -53,6 +53,8 @@ StatusType joinClan(void *DS,int playerID,int clanID) {
 	return ALLOCATION_ERROR;
     } catch(Oasis::clanOrPlayerDoesntExist& exc) {
 	return FAILURE;
+    } catch(Oasis::playerAlreadyHasClan& exc) {
+	return FAILURE;
     }
 
     return SUCCESS;
@@ -125,6 +127,9 @@ StatusType uniteClans(void *DS,int clanID1,int clanID2) {
 }
 
 void quit(void **DS) {
+
+    if(!DS)
+	return;
 
     Oasis *oasis = (Oasis*)(*DS);
     delete oasis;

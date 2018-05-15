@@ -42,7 +42,7 @@ namespace hw1 {
 	    players_by_coins.deleteNode(player);
 	    player->addCoins(coins);
 
-	    players_by_coins.insertNode(player);
+	    this->addPlayer(player);
 
 	} catch ( std::bad_alloc& ex ) {
 	    throw memoryAllocFailure();

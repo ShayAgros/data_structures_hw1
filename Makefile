@@ -15,7 +15,9 @@ $(OUTPUT): main1.cpp $(OBJ)
 test: $(OBJ)
 	g++ $(CFLAGS) -o test_avl $^ avl_test.cpp
 	g++ $(CFLAGS) -o test_oasis $^ oasis_test.cpp
+	g++ $(CFLAGS) -o gab_test $^ gab_test.cpp
 
 .PHONY: clean
 clean:
 	rm -f $(OUTPUT) test_avl test_oasis test.o
+	rm -f gab_test

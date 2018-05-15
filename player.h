@@ -43,6 +43,8 @@ class Player {
 
     int getID();
 
+    int getScore();
+
     ~Player() = default;
 
 
@@ -59,6 +61,8 @@ class Player {
     class Comp_by_score {
 	public:
 	bool operator() (Player *p1, Player *p2) {
+	    if( p1->num_of_challenges == p2->num_of_challenges )
+		return p1->id > p2->id;
 	    return ( p1->num_of_challenges < p2->num_of_challenges );
 	}
 

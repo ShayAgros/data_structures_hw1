@@ -9,16 +9,18 @@ namespace hw1 {
 
 	void Oasis::addPlayer(int playerID,int initialCoins) {
 	    Player *player = NULL;
+	    Player::Comp_by_score compare;
 		try {
 		     player = new Player(playerID,initialCoins);
-
 
 		     players_by_id.insertNode(player);
 
 		     players_by_coins.insertNode(player);
 
-		     if(!best_player) /* we don't have players yet */
-			 best_player = player;
+		    if( !best_player ||
+			compare(best_player, player)) {
+			best_player = player;
+		    }
 
 		} catch ( std::bad_alloc& exc ) {
 		    delete player;
@@ -103,7 +105,7 @@ namespace hw1 {
 		player = players_by_id.findValCopyInTree(&player_to_search);
 		clan = clans.findValCopyInTree(&clan_to_search);
 
-		if( player->getClan() != NULL && player->getClan() != clan)
+		if( player->getClan() != NULL)
 		    throw playerAlreadyHasClan();
 		else if( !player->getClan() ){
 		    /*if player isn't already assigned to this clan*/
@@ -132,6 +134,7 @@ namespace hw1 {
 		Player player_to_search(playerID);
 		Player *player;
 		Clan *clan;
+		Player::Comp_by_score compare;
 
 		player = players_by_id.findValCopyInTree(&player_to_search);
 		clan = (Clan*)player->getClan();
@@ -144,6 +147,12 @@ namespace hw1 {
 		    player->addCoins(coins);
 
 		players_by_coins.insertNode(player);
+
+		
+		if( !best_player ||
+		    compare(best_player, player)) {
+		    	best_player = player;
+		}
 
 	    } catch ( std::bad_alloc& exc ) {
 		throw memoryAllocFailure();
@@ -203,7 +212,7 @@ namespace hw1 {
 		    }
 
 		    board = new Player*[size];
-		    *players = new int[size];
+		    *players = (int*)malloc(sizeof(int)*size);
 
 		    tree->ToArray(board);
 		    for(int i=0;i < size; i++)
@@ -216,7 +225,7 @@ namespace hw1 {
 		} catch (std::bad_alloc& exc) {
 		    delete board;
 		    throw memoryAllocFailure();
-		} catch(players_tree_by_id::NodeDoesntExist& exc) {
+		} catch(clans_tree::NodeDoesntExist& exc) {
 		    throw clanOrPlayerDoesntExist();
 		} catch (...) {
 		    std::cout << "Unexpected execption" << std::endl;
@@ -252,7 +261,7 @@ namespace hw1 {
 			Player* best_player1 = clan1->getBestPlayer();
 			Player* best_player2 = clan2->getBestPlayer();
 			Player* best_player;
-			Player::Comp_by_coins compare;
+			Player::Comp_by_score compare;
 
 			if (best_player1 == NULL) {
 				best_player = best_player2;
@@ -319,7 +328,9 @@ namespace hw1 {
 		}
 		Player::Comp_by_coins compare;
 		int index_first = 0, index_second = 0, merged_index = 0;
+
 		while (index_first < size_first && index_second < size_second) {
+
 			if (first_array[index_first]->getNumOfChallenges() == 0) {
 				first_array[index_first]->setClan(NULL);
 				index_first++;

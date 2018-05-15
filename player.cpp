@@ -20,5 +20,9 @@ namespace hw1 {
 	return this->id;
     }
 
+    int Player::getScore() {
+	return this->num_of_challenges;
+    }
+
 
 } // end namespace
