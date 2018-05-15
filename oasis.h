@@ -25,6 +25,7 @@ class Oasis {
     	Oasis() : players_by_id(), players_by_coins(), best_player(NULL),
 		clans() {}
 
+	~Oasis();
     	/* adds a player to the all_players
 	 * tree and updates best_player if it isn't defined
 	 * (can happen only if we add the first player)
@@ -107,6 +108,7 @@ class Oasis {
      * players' tree
      *
      */
+    void getBestPlayer(int clanID, int *playerID);
 
     /* getScoreBoard:
      * maybe a clan needs one more tree that will be arranged by
@@ -114,7 +116,7 @@ class Oasis {
      * more AVL tree
      *
      */
-
+	 void getScoreboard(int clanID, int **players, int *numOfPlayers);
 
 /* TODO: check whether you need 'clanDoesntExist' and 'playerDoesntExist'*/
     class playerExist{};

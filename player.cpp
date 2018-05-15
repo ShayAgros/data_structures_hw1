@@ -15,6 +15,10 @@ namespace hw1 {
 	this->coins += new_coins;	
 	this->num_of_challenges ++;
     }
+	
+    int Player::getID() {
+	return this->id;
+    }
 
 
 } // end namespace

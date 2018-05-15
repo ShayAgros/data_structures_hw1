@@ -24,10 +24,10 @@ class Player {
     Player(int id) : id(id) , coins(0) ,
     	num_of_challenges(0), clan_pointer(NULL) {}
 
-	// We need this default c'tor because the avl need it 
-	// (in order to build empty tree)
-	Player() : id(0), coins(0),
-		num_of_challenges(0), clan_pointer(NULL) {}
+    // We need this default c'tor because the avl need it 
+    // (in order to build empty tree)
+    Player() : id(0), coins(0),
+	    num_of_challenges(0), clan_pointer(NULL) {}
 
     /* returns a pointer to player's clan */
     void* getClan();
@@ -40,6 +40,8 @@ class Player {
     }
 
     void addCoins(int new_coins);
+
+    int getID();
 
     ~Player() = default;
 
