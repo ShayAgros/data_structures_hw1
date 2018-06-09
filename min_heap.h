@@ -16,8 +16,22 @@ namespace hw1 {
 template  <typename T, typename Compare=std::less<T>>
 class MinHeap {
 
+	class Node {
+	private:
+		int _index;
+		T _data;
+	public:
+		Node(int index, const T& data) : _index(index), _data(data) {}
+		~Node() {}
+
+		int getIndex() { return _index; }
+		const T& getData() { return _data; }
+		void setIndex(int index) { _index = index; }
+		void setData(const T& data) { _data = data; }
+	};
+
 private:
-	T* _heap;
+	Node** _heap;
 	int _size, _array_size;
 	Compare _compare;
 
@@ -38,9 +52,11 @@ private:
 	}
 
 	void swap(int i, int j) {
-		T temp = _heap[i];
+		Node* temp = _heap[i];
 		_heap[i] = _heap[j];
 		_heap[j] = temp;
+		_heap[i]->setIndex(i);
+		_heap[j]->setIndex(j);
 	}
 
 	void siftDown(int i) {
@@ -53,10 +69,12 @@ private:
 			int left_index = getLeftSonIndex(i);
 			int right_index = getRightSonIndex(i);
 
-			if (left_index < size && compare(_heap[left_index], _heap[i])) {
+			if (left_index < size && compare(_heap[left_index]->getData(), 
+				_heap[i]->getData())) {
 				min_index = left_index;
 			}
-			if (right_index < size && compare(_heap[right_index], _heap[min_index])) {
+			if (right_index < size && compare(_heap[right_index]->getData(), 
+				_heap[min_index]->getData())) {
 				min_index = right_index;
 			}
 			if (min_index != i) {
@@ -73,7 +91,7 @@ private:
 			throw HeapOutOfBandException();
 		}
 		int father_index = getFatherIndex(i);
-		while ((father_index != -1) && compare(_heap[i], _heap[father_index])) {
+		while ((father_index != -1) && compare(_heap[i]->getData(), _heap[father_index]->getData())) {
 			swap(i, father_index);
 			i = father_index;
 			father_index = getFatherIndex(i);
@@ -85,7 +103,14 @@ public:
 
 	~MinHeap() {
 		if (_heap != NULL) {
+			for (int i = 0; i < _size; i++) {
+				if (_heap[i] != NULL) {
+					delete _heap[i];
+					_heap[i] = NULL;
+				}
+			}
 			delete[] _heap;
+			_heap = NULL;
 		}
 	}
 
@@ -95,11 +120,12 @@ public:
 		}
 		_size = n;
 		_array_size = pow(2, (int)log(n) + 1);
-		_heap = new T[_array_size];
+		_heap = new Node*[_array_size];
 
 		for (int i = 0; i < _size_array; i++) {
-			if (i < n) {
-				_heap[i] = arr[i];
+			_heap[i] = NULL;
+			if (i < _size) {
+				_heap[i] = new Node(i, arr[i]);
 			}
 		}
 
@@ -110,7 +136,7 @@ public:
 
 	void resizeHeap() {
 		_array_size *= 2;
-		T* new_heap = new T[_array_size];
+		Node** new_heap = new Node*[_array_size];
 		for (int i = 0; i < _size; i++) {
 			new_heap[i] = _heap[i];
 		}
@@ -118,18 +144,18 @@ public:
 		_heap = new_heap;
 	}
 
-	void insert(T& x) {
+	void insert(const T& x) {
 		if (_size == _array_size) {
 			resizeHeap()
 		}
-		_heap[_size] = x;
+		_heap[_size] = new Node(_size, x);
 		_size++;
 		siftUp(_size - 1);
 	}
 
-	void decKey(int index, T& value) {
-		if (compare(value, _heap[i])) {
-			_heap[i] = value;
+	void decKey(int index, const T& value) {
+		if (compare(value, _heap[i]->getData())) {
+			_heap[i]->setData(value);
 		}
 		siftUp(index);
 	}
@@ -138,14 +164,20 @@ public:
 		if (_size == 0) {
 			return;
 		}
+		delete _heap[0];
 		_heap[0] = _heap[_size - 1];
+		_heap[0]->setIndex(0);
+		_heap[_size - 1] = NULL;
 		_size--;
 		if (_size > 0) {
 			siftDown(0);
 		}
 	}
 
-
+	const T& findMin() {
+		return _heap[0]->getData();
+	}
+	
 	class HeapOutOfBandException {};
 	class HeapAlreadyExistsException {};
 
