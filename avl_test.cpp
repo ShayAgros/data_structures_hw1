@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "avl.h"
-#include "oasis.h"
 
 using hw1::AvlTree;
 using std::ostream;

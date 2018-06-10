@@ -27,10 +27,12 @@ class AvlTree {
 	Node *father;
 	Node *left_child, *right_child;
 	int height;
+	int size ;
 
 
 	Node(const T& data,const Node& father) : data(data), compare(),
-	father(father), left_child(NULL), right_child(NULL), height(0)  {
+	father(father), left_child(NULL), right_child(NULL), height(0),
+		size(1) {
 
 	    if(compare(this->data, father->data))
 		father->left_child = this;
@@ -39,10 +41,10 @@ class AvlTree {
 	}
 
 	Node() : data(), father(NULL),
-		left_child(NULL), right_child(NULL), height(0) { }
+		left_child(NULL), right_child(NULL), height(0), size(1) { }
 
 	Node(const T& data) : data(data), father(NULL),
-	left_child(NULL), right_child(NULL), height(0) { }
+	left_child(NULL), right_child(NULL), height(0), size(1) { }
 
 	~Node() = default;
 
@@ -72,6 +74,14 @@ class AvlTree {
 
 	    this->height = (left_height > right_height) ?
 				left_height + 1: right_height + 1;
+	}
+
+	void update_size() {
+
+	    int left_size = (left_child)? left_child->size : 0;
+	    int right_size = (right_child)? right_child->size : 0;
+
+	    this->size = left_size + right_size + 1;
 	}
 
 	bool operator<(const Node& node) {
@@ -145,19 +155,28 @@ class AvlTree {
  *
  */
     void rotate_right(Node *node) {
-	Node *temp = node->left_child->right_child;
+	Node *a = node;
+	Node *b = node->left_child;
 
-	node->left_child->set_father(node->father);
+	Node *e = b->right_child;
 
-	node->father = node->left_child;
-	node->left_child->right_child = node;
+	// update relations
 
-	node->left_child = temp;
-	if(temp) temp->father = node;
+	b->set_father(a->father);
 
-	node->update_height();
-	node->father->update_height();
+	a->father = b;
+	b->right_child = a;
+
+	a->left_child = e;
+	if(e) e->father = a;
+
+	// update height and size
+	a->update_height();
+	a->update_size();
+	a->father->update_height();
+	a->father->update_size();
     }
+
 
 /*	a		c
  *    /   \	      /  \
@@ -167,18 +186,24 @@ class AvlTree {
  *
  */
     void rotate_left(Node *node) {
-	Node *temp = node->right_child->left_child;
+	Node *a = node;
+	Node *c = a->right_child;
 
-	node->right_child->set_father(node->father);
+	Node *d = c->left_child;
 
-	node->father = node->right_child;
-	node->right_child->left_child = node;
+	c->set_father(a->father);
 
-	node->right_child = temp;
-	if(temp) temp->father = node;
+	a->father = c;
+	c->left_child = a;
 
-	node->update_height();
-	node->father->update_height();
+	a->right_child = d;
+	if(d) d->father = a;
+
+	// update height and size
+	a->update_height();
+	a->update_size();
+	a->father->update_height();
+	a->father->update_size();
     }
 
     void do_right_rotation(Node *node) {
@@ -233,6 +258,8 @@ class AvlTree {
 
 	while (!!head) {
 	    head->update_height();
+	    head->update_size();
+
 	    if(head->find_height_diff() > 1)
 		do_right_rotation(head);
 	    else if( head->find_height_diff() < -1)
@@ -251,7 +278,7 @@ class AvlTree {
 	if(!node)
 	    return true;
 
-	bool heights, sizes, height_diff;
+	bool heights, sizes, height_diff, node_sizes;
 	Node *lson,*rson;
 
 	lson = node->left_child;
@@ -268,8 +295,14 @@ class AvlTree {
 	sizes &= (rson)? compare(node->data,rson->data) : true;
 
 
+	// checks node's sub-tree size
+	int lnode_size = (lson) ? lson->size : 0;
+	int rnode_size = (rson) ? rson->size : 0;
+
+	node_sizes = ( (node->size) == (lnode_size + rnode_size + 1));
+
 	return heights && sizes  && height_diff
-	    && isAVL(lson) && isAVL(rson);
+	    && node_sizes && isAVL(lson) && isAVL(rson) ;
     }
 
 
@@ -340,6 +373,31 @@ public:
     ~AvlTree() {
 	free_vertices(root);
     }
+
+
+
+    /*AvlTree(const AvlTree& avlTree) : root(), compare(),
+    	left_most(), size(avlTree.size) {
+	if( avlTree.size == 0)
+	    return;
+
+	root = new Node();
+	recursiveEmptyTree(root, size - 1, 0);
+
+	left_most = root;
+	while (left_most && left_most->left_child)
+	    left_most = left_most->left_child;
+
+	Node* src_current = avlTree.left_most;
+	Node* dst_current = left_most;
+
+	dst_current.val = src_current.val;
+	for(int i=1; i < avlTree.size; i++) {
+	    src_current = findNextOrderedNode(src_current);
+	    dst_current = findNextOrderedNode(dst_current);
+	    dst_current.val = src_current.val;
+	}
+    }*/
 
     /* the function checks wheather the tree is empty */
     bool isEmpty() const {
