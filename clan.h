@@ -1,51 +1,36 @@
 #ifndef clan_d
 #define clan_d
 
-
-
 #include "avl.h"
 #include "player.h"
+#include "min_heap.h"
 
 namespace hw1 {
 
-    typedef AvlTree<Player*, Player::Comp_by_coins> Players_Tree;
+typedef AvlTree<Player*, Player::Comp_by_score> Players_Tree;
 
-    class Clan {
+class Clan {
+
 	int id;
-	// might not be needed
-	//AvlTree<Player,Player::Comp_by_score> players_b_score;
-	Players_Tree players_by_coins;
-	Player* player_highest_score;
+	bool _can_fight;
+	Players_Tree _players_by_score;
+	MinHeap<int>::Node* _min_heap_node;
+	Clan* _next;
 
-	Player::Comp_by_score compare;
+public:
+	Clan(int id) : id(id), _can_fight(true),
+		_players_by_score(), _min_heap_node(NULL), _next(NULL) {}
 
-	public:
-	Clan(int id) : id(id), players_by_coins(), player_highest_score() {}
-
-	Clan(int id, Players_Tree& players, Player* player_highest_score) : 
-	    id(id), players_by_coins(players), player_highest_score(player_highest_score) {}
+	~Clan() {}
 
 	void addPlayer(Player *player);
 
-	int getNumOfPlayers();
-
-	Player* getBestPlayer();
-
-	Players_Tree& getPlayers();
-	
-	void updatePlayerCoins(Player* player,int coins);
+	class memoryAllocFailure {};
+};
 
 
 
-	class Comp_by_id {
-	    public:
-		bool operator () (Clan* c1, Clan* c2) {
-		    return (c1->id < c2->id);
-		}
-	};
 
-	class memoryAllocFailure{};
-    };
 
 } // end namespace
 #endif

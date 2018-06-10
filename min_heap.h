@@ -15,7 +15,7 @@ namespace hw1 {
 
 template  <typename T, typename Compare=std::less<T>>
 class MinHeap {
-
+public:
 	class Node {
 	private:
 		int _index;

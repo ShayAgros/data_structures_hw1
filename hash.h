@@ -1,0 +1,1 @@
+#define HASH_H
