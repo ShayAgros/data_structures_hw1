@@ -13,6 +13,7 @@
 using std::ostream;
 using std::endl;
 
+// TODO: add node's size update after deletion 
 namespace hw1 {
 
 template  <typename T, typename Compare=std::less<T> >
@@ -418,6 +419,38 @@ public:
 	}
 	root = new_root;
     }
+/* finds value in an ordered array's specific index
+ * @index - value's index
+ *
+ * Exceptions:
+ * indexIsHigherThanSize - @index is higher than array's size
+ */
+    T& findValByIndex(int index) {
+	if ( index >= root->size)
+	    throw indexIsHigherThanSize();
+
+	Node *current = root;
+	int c_index ;
+
+	do {
+	    c_index = current->size;
+	    c_index -= (current->right_child) ? current->right_child->size : 0;
+	    c_index--; // indexes range from 0 to size-1
+
+	    if ( index < c_index )
+		current = current->left_child;
+	    else if ( index > c_index ) {
+		index -= c_index + 1; // return to index from 1-n repre.
+		current = current->right_child;
+	    } else
+		break;
+	    
+	} while ( true );
+
+	assert ( current );
+
+	return current->getData();
+    }
 
     void insertNode(const T& val) {
 
@@ -459,7 +492,7 @@ public:
 
 
     void deleteNode(const T& val) {
-	Node* node;	
+	Node* node;
 
 	try {
 	    node = findVal(root,val);
@@ -579,7 +612,7 @@ public:
     //			Null if an allocation failed.
     void ToArray(T* array) {
 	int index = 0;
-	
+
 	if( !array )
 	    return;
 
@@ -676,6 +709,7 @@ public:
     class RootNodeExists {};
     class NodeDoesntExist{};
     class AvlAllocationError {};
+    class indexIsHigherThanSize {};
 
 private:
     class findNodeResult {

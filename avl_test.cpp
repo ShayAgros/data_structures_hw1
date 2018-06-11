@@ -228,12 +228,58 @@ bool avlDeleteTest2() {
 }
 
 
+bool avlFindIndexTest() {
+
+	AvlTree<int> tree;
+	const int num_values = 1200;
+
+	for (int i=0; i<=num_values;i++) {
+	    try {
+		tree.insertNode(i);
+	    } catch (AvlTree<int>::NodeExists& ex) {
+		return false;
+	    } catch (...) {
+		return false;
+	    }
+	}
+	if( tree.getSize() != num_values+1)
+	    return false;
+
+	for (int i=0; i<=num_values;i++) {
+	    try {
+		int val = tree.findValByIndex(i);
+		
+		if(val != i)
+		    return false;
+	    } catch (AvlTree<int>::indexIsHigherThanSize& ex) {
+		return false;
+	    } catch (...) {
+		return false;
+	    }
+	}
+
+
+	for (int i=num_values+1; i<=num_values+100;i++) {
+	    try {
+		tree.findValByIndex(i);
+		return false;
+	    } catch (AvlTree<int>::indexIsHigherThanSize& ex) {
+	    } catch (...) {
+		return false;
+	    }
+	}
+
+    return true;
+}
+
+
 int main () {
 
 	RUN_TEST(avlInsertTest);
 	RUN_TEST(avlFindValTest);
 	RUN_TEST(avlDeleteTest);
 	RUN_TEST(avlDeleteTest2);
+	RUN_TEST(avlFindIndexTest);
 
 
 /*
