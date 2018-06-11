@@ -16,7 +16,16 @@ using std::endl;
 // TODO: add node's size update after deletion 
 namespace hw1 {
 
-template  <typename T, typename Compare=std::less<T> >
+template < typename T >
+class emptyGetGrade {
+
+    public:
+	int operator() (T& obj) {
+	    return 0;
+	}
+};
+
+template  <typename T, typename Compare=std::less<T>,typename GetGrade=emptyGetGrade<T>>
 class AvlTree {
 
     class Node {
@@ -25,15 +34,17 @@ class AvlTree {
 
 	T data;
 	Compare compare;
+	GetGrade getGrade;
 	Node *father;
 	Node *left_child, *right_child;
 	int height;
 	int size ;
+	int subtree_grade;
 
 
 	Node(const T& data,const Node& father) : data(data), compare(),
-	father(father), left_child(NULL), right_child(NULL), height(0),
-		size(1) {
+	getGrade(), father(father), left_child(NULL), right_child(NULL),
+		height(0), size(1), subtree_grade(0) {
 
 	    if(compare(this->data, father->data))
 		father->left_child = this;
@@ -41,11 +52,13 @@ class AvlTree {
 		father->right_child = this;
 	}
 
-	Node() : data(), father(NULL),
-		left_child(NULL), right_child(NULL), height(0), size(1) { }
+	Node() : data(), compare(), getGrade(), father(NULL),
+		left_child(NULL), right_child(NULL), height(0), size(1),
+		subtree_grade(0) {}
 
-	Node(const T& data) : data(data), father(NULL),
-	left_child(NULL), right_child(NULL), height(0), size(1) { }
+	Node(const T& data) : data(data), compare(), getGrade(),
+	father(NULL), left_child(NULL), right_child(NULL), height(0),
+	size(1), subtree_grade(0) { }
 
 	~Node() = default;
 
@@ -83,6 +96,16 @@ class AvlTree {
 	    int right_size = (right_child)? right_child->size : 0;
 
 	    this->size = left_size + right_size + 1;
+	}
+
+	void update_grade() {
+
+	    int left_grade = (left_child)? left_child->subtree_grade : 0;
+	    int right_grade = (right_child)? right_child->subtree_grade : 0;
+
+	    int self_grade = getGrade(this->data);
+
+	    this->subtree_grade = left_grade + right_grade + self_grade;
 	}
 
 	bool operator<(const Node& node) {
@@ -126,6 +149,7 @@ class AvlTree {
 
     Node *root;
     Compare compare;
+    GetGrade getGrade;
     Node *left_most;
     int size;
 
@@ -174,8 +198,10 @@ class AvlTree {
 	// update height and size
 	a->update_height();
 	a->update_size();
+	a->update_grade();
 	a->father->update_height();
 	a->father->update_size();
+	a->father->update_grade();
     }
 
 
@@ -203,8 +229,10 @@ class AvlTree {
 	// update height and size
 	a->update_height();
 	a->update_size();
+	a->update_grade();
 	a->father->update_height();
 	a->father->update_size();
+	a->father->update_grade();
     }
 
     void do_right_rotation(Node *node) {
@@ -260,6 +288,7 @@ class AvlTree {
 	while (!!head) {
 	    head->update_height();
 	    head->update_size();
+	    head->update_grade();
 
 	    if(head->find_height_diff() > 1)
 		do_right_rotation(head);
@@ -366,10 +395,10 @@ class AvlTree {
 
 public:
 
-    AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
+    AvlTree() : root(NULL), compare(), getGrade() , left_most(NULL), size(0) {}
 
     AvlTree(const AvlTree& avlTree) : root(avlTree.root), compare(avlTree.compare),
-    	left_most(avlTree.left_most), size(avlTree.size) {}
+    	getGrade(), left_most(avlTree.left_most), size(avlTree.size) {}
 
     ~AvlTree() {
 	free_vertices(root);
@@ -450,6 +479,49 @@ public:
 	assert ( current );
 
 	return current->getData();
+    }
+
+
+/* finds value in an ordered array's specific index
+ * and returns its subtree_grade
+ * @index - value's index
+ *
+ * Exceptions:
+ * indexIsHigherThanSize - @index is higher than array's size
+ */
+    int findGradeByIndex(int index) {
+	if ( index >= root->size)
+	    throw indexIsHigherThanSize();
+
+	Node *current = root;
+	int c_index ;
+	int subtree_grade = 0;
+
+	do {
+	    c_index = current->size;
+	    c_index -= (current->right_child) ? current->right_child->size : 0;
+	    c_index--; // indexes range from 0 to size-1
+
+	    if ( index < c_index )
+		current = current->left_child;
+	    else if ( index > c_index ) {
+		index -= c_index + 1; // return to index from 1-n repre.
+		subtree_grade += current->subtree_grade;
+		subtree_grade -= (current->right_child) ?
+		    current->right_child->subtree_grade: 0;
+		current = current->right_child;
+	    } else
+		break;
+	    
+	} while ( true );
+
+	assert ( current );
+
+	subtree_grade += current->subtree_grade;
+	subtree_grade -= (current->right_child) ?
+	    current->right_child->subtree_grade: 0;
+
+	return subtree_grade;
     }
 
     void insertNode(const T& val) {
