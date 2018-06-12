@@ -272,7 +272,7 @@ bool avlFindIndexTest() {
     return true;
 }
 
-
+/**
 int main () {
 
 	RUN_TEST(avlInsertTest);
@@ -301,6 +301,6 @@ int main () {
  *
  *        oasis.uniteClans(1, 2);
  *
- */
+ 
 	return 0;
-}
+}*/

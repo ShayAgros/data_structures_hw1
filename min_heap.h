@@ -11,6 +11,8 @@
 #include <assert.h>
 #include <math.h>
 
+#define HEAP_DEAFULT_SIZE 1
+
 namespace hw1 {
 
 template  <typename T, typename Compare=std::less<T>>
@@ -69,11 +71,11 @@ private:
 			int left_index = getLeftSonIndex(i);
 			int right_index = getRightSonIndex(i);
 
-			if (left_index < size && compare(_heap[left_index]->getData(), 
+			if (left_index < _size && _compare(_heap[left_index]->getData(), 
 				_heap[i]->getData())) {
 				min_index = left_index;
 			}
-			if (right_index < size && compare(_heap[right_index]->getData(), 
+			if (right_index < _size && _compare(_heap[right_index]->getData(), 
 				_heap[min_index]->getData())) {
 				min_index = right_index;
 			}
@@ -91,11 +93,24 @@ private:
 			throw HeapOutOfBandException();
 		}
 		int father_index = getFatherIndex(i);
-		while ((father_index != -1) && compare(_heap[i]->getData(), _heap[father_index]->getData())) {
+		while ((father_index != -1) && _compare(_heap[i]->getData(), _heap[father_index]->getData())) {
 			swap(i, father_index);
 			i = father_index;
 			father_index = getFatherIndex(i);
 		}		
+	}
+
+	void resizeHeap() {
+		_array_size *= 2;
+		if (_array_size == 0) {
+			_array_size = HEAP_DEAFULT_SIZE;
+		}
+		Node** new_heap = new Node*[_array_size];
+		for (int i = 0; i < _size; i++) {
+			new_heap[i] = _heap[i];
+		}
+		delete[] _heap;
+		_heap = new_heap;
 	}
 
 public:
@@ -114,39 +129,30 @@ public:
 		}
 	}
 
-	MakeHeap(int n, T* arr) {
+	void MakeHeap(int n, T* arr) {
 		if (_heap != NULL) {
-			HeapAlreadyExistsException();
+			throw HeapAlreadyExistsException();
 		}
 		_size = n;
-		_array_size = pow(2, (int)log(n) + 1);
+		int power = (int)(log(n)/log(2))+ 1;
+		_array_size = pow(2, power);
 		_heap = new Node*[_array_size];
 
-		for (int i = 0; i < _size_array; i++) {
+		for (int i = 0; i < _array_size; i++) {
 			_heap[i] = NULL;
 			if (i < _size) {
 				_heap[i] = new Node(i, arr[i]);
 			}
 		}
 
-		for (int i = ((size / 2) - 1); i >= 0; i--) {
+		for (int i = ((_size / 2) - 1); i >= 0; i--) {
 			siftDown(i);
 		}
 	}
 
-	void resizeHeap() {
-		_array_size *= 2;
-		Node** new_heap = new Node*[_array_size];
-		for (int i = 0; i < _size; i++) {
-			new_heap[i] = _heap[i];
-		}
-		delete[] _heap;
-		_heap = new_heap;
-	}
-
 	void insert(const T& x) {
 		if (_size == _array_size) {
-			resizeHeap()
+			resizeHeap();
 		}
 		_heap[_size] = new Node(_size, x);
 		_size++;
@@ -154,8 +160,8 @@ public:
 	}
 
 	void decKey(int index, const T& value) {
-		if (compare(value, _heap[i]->getData())) {
-			_heap[i]->setData(value);
+		if (_compare(value, _heap[index]->getData())) {
+			_heap[index]->setData(value);
 		}
 		siftUp(index);
 	}
