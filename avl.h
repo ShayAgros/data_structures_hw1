@@ -13,9 +13,19 @@
 using std::ostream;
 using std::endl;
 
+// TODO: add node's size update after deletion 
 namespace hw1 {
 
-template  <typename T, typename Compare=std::less<T> >
+template < typename T >
+class emptyGetGrade {
+
+    public:
+	int operator() (T& obj) {
+	    return 0;
+	}
+};
+
+template  <typename T, typename Compare=std::less<T>,typename GetGrade=emptyGetGrade<T>>
 class AvlTree {
 
     class Node {
@@ -24,13 +34,17 @@ class AvlTree {
 
 	T data;
 	Compare compare;
+	GetGrade getGrade;
 	Node *father;
 	Node *left_child, *right_child;
 	int height;
+	int size ;
+	int subtree_grade;
 
 
 	Node(const T& data,const Node& father) : data(data), compare(),
-	father(father), left_child(NULL), right_child(NULL), height(0)  {
+	getGrade(), father(father), left_child(NULL), right_child(NULL),
+		height(0), size(1), subtree_grade(0) {
 
 	    if(compare(this->data, father->data))
 		father->left_child = this;
@@ -38,11 +52,13 @@ class AvlTree {
 		father->right_child = this;
 	}
 
-	Node() : data(), father(NULL),
-		left_child(NULL), right_child(NULL), height(0) { }
+	Node() : data(), compare(), getGrade(), father(NULL),
+		left_child(NULL), right_child(NULL), height(0), size(1),
+		subtree_grade(0) {}
 
-	Node(const T& data) : data(data), father(NULL),
-	left_child(NULL), right_child(NULL), height(0) { }
+	Node(const T& data) : data(data), compare(), getGrade(),
+	father(NULL), left_child(NULL), right_child(NULL), height(0),
+	size(1), subtree_grade(0) { }
 
 	~Node() = default;
 
@@ -72,6 +88,24 @@ class AvlTree {
 
 	    this->height = (left_height > right_height) ?
 				left_height + 1: right_height + 1;
+	}
+
+	void update_size() {
+
+	    int left_size = (left_child)? left_child->size : 0;
+	    int right_size = (right_child)? right_child->size : 0;
+
+	    this->size = left_size + right_size + 1;
+	}
+
+	void update_grade() {
+
+	    int left_grade = (left_child)? left_child->subtree_grade : 0;
+	    int right_grade = (right_child)? right_child->subtree_grade : 0;
+
+	    int self_grade = getGrade(this->data);
+
+	    this->subtree_grade = left_grade + right_grade + self_grade;
 	}
 
 	bool operator<(const Node& node) {
@@ -115,6 +149,7 @@ class AvlTree {
 
     Node *root;
     Compare compare;
+    GetGrade getGrade;
     Node *left_most;
     int size;
 
@@ -145,19 +180,30 @@ class AvlTree {
  *
  */
     void rotate_right(Node *node) {
-	Node *temp = node->left_child->right_child;
+	Node *a = node;
+	Node *b = node->left_child;
 
-	node->left_child->set_father(node->father);
+	Node *e = b->right_child;
 
-	node->father = node->left_child;
-	node->left_child->right_child = node;
+	// update relations
 
-	node->left_child = temp;
-	if(temp) temp->father = node;
+	b->set_father(a->father);
 
-	node->update_height();
-	node->father->update_height();
+	a->father = b;
+	b->right_child = a;
+
+	a->left_child = e;
+	if(e) e->father = a;
+
+	// update height and size
+	a->update_height();
+	a->update_size();
+	a->update_grade();
+	a->father->update_height();
+	a->father->update_size();
+	a->father->update_grade();
     }
+
 
 /*	a		c
  *    /   \	      /  \
@@ -167,18 +213,26 @@ class AvlTree {
  *
  */
     void rotate_left(Node *node) {
-	Node *temp = node->right_child->left_child;
+	Node *a = node;
+	Node *c = a->right_child;
 
-	node->right_child->set_father(node->father);
+	Node *d = c->left_child;
 
-	node->father = node->right_child;
-	node->right_child->left_child = node;
+	c->set_father(a->father);
 
-	node->right_child = temp;
-	if(temp) temp->father = node;
+	a->father = c;
+	c->left_child = a;
 
-	node->update_height();
-	node->father->update_height();
+	a->right_child = d;
+	if(d) d->father = a;
+
+	// update height and size
+	a->update_height();
+	a->update_size();
+	a->update_grade();
+	a->father->update_height();
+	a->father->update_size();
+	a->father->update_grade();
     }
 
     void do_right_rotation(Node *node) {
@@ -233,6 +287,9 @@ class AvlTree {
 
 	while (!!head) {
 	    head->update_height();
+	    head->update_size();
+	    head->update_grade();
+
 	    if(head->find_height_diff() > 1)
 		do_right_rotation(head);
 	    else if( head->find_height_diff() < -1)
@@ -251,7 +308,7 @@ class AvlTree {
 	if(!node)
 	    return true;
 
-	bool heights, sizes, height_diff;
+	bool heights, sizes, height_diff, node_sizes;
 	Node *lson,*rson;
 
 	lson = node->left_child;
@@ -268,8 +325,14 @@ class AvlTree {
 	sizes &= (rson)? compare(node->data,rson->data) : true;
 
 
+	// checks node's sub-tree size
+	int lnode_size = (lson) ? lson->size : 0;
+	int rnode_size = (rson) ? rson->size : 0;
+
+	node_sizes = ( (node->size) == (lnode_size + rnode_size + 1));
+
 	return heights && sizes  && height_diff
-	    && isAVL(lson) && isAVL(rson);
+	    && node_sizes && isAVL(lson) && isAVL(rson) ;
     }
 
 
@@ -332,14 +395,39 @@ class AvlTree {
 
 public:
 
-    AvlTree() : root(NULL), compare() , left_most(NULL), size(0) {}
+    AvlTree() : root(NULL), compare(), getGrade() , left_most(NULL), size(0) {}
 
     AvlTree(const AvlTree& avlTree) : root(avlTree.root), compare(avlTree.compare),
-    	left_most(avlTree.left_most), size(avlTree.size) {}
+    	getGrade(), left_most(avlTree.left_most), size(avlTree.size) {}
 
     ~AvlTree() {
 	free_vertices(root);
     }
+
+
+
+    /*AvlTree(const AvlTree& avlTree) : root(), compare(),
+    	left_most(), size(avlTree.size) {
+	if( avlTree.size == 0)
+	    return;
+
+	root = new Node();
+	recursiveEmptyTree(root, size - 1, 0);
+
+	left_most = root;
+	while (left_most && left_most->left_child)
+	    left_most = left_most->left_child;
+
+	Node* src_current = avlTree.left_most;
+	Node* dst_current = left_most;
+
+	dst_current.val = src_current.val;
+	for(int i=1; i < avlTree.size; i++) {
+	    src_current = findNextOrderedNode(src_current);
+	    dst_current = findNextOrderedNode(dst_current);
+	    dst_current.val = src_current.val;
+	}
+    }*/
 
     /* the function checks wheather the tree is empty */
     bool isEmpty() const {
@@ -359,6 +447,81 @@ public:
 	    throw RootNodeExists();
 	}
 	root = new_root;
+    }
+/* finds value in an ordered array's specific index
+ * @index - value's index
+ *
+ * Exceptions:
+ * indexIsHigherThanSize - @index is higher than array's size
+ */
+    T& findValByIndex(int index) {
+	if ( index >= root->size)
+	    throw indexIsHigherThanSize();
+
+	Node *current = root;
+	int c_index ;
+
+	do {
+	    c_index = current->size;
+	    c_index -= (current->right_child) ? current->right_child->size : 0;
+	    c_index--; // indexes range from 0 to size-1
+
+	    if ( index < c_index )
+		current = current->left_child;
+	    else if ( index > c_index ) {
+		index -= c_index + 1; // return to index from 1-n repre.
+		current = current->right_child;
+	    } else
+		break;
+	    
+	} while ( true );
+
+	assert ( current );
+
+	return current->getData();
+    }
+
+
+/* finds value in an ordered array's specific index
+ * and returns its subtree_grade
+ * @index - value's index
+ *
+ * Exceptions:
+ * indexIsHigherThanSize - @index is higher than array's size
+ */
+    int findGradeByIndex(int index) {
+	if ( index >= root->size)
+	    throw indexIsHigherThanSize();
+
+	Node *current = root;
+	int c_index ;
+	int subtree_grade = 0;
+
+	do {
+	    c_index = current->size;
+	    c_index -= (current->right_child) ? current->right_child->size : 0;
+	    c_index--; // indexes range from 0 to size-1
+
+	    if ( index < c_index )
+		current = current->left_child;
+	    else if ( index > c_index ) {
+		index -= c_index + 1; // return to index from 1-n repre.
+		subtree_grade += current->subtree_grade;
+		subtree_grade -= (current->right_child) ?
+		    current->right_child->subtree_grade: 0;
+		current = current->right_child;
+	    } else
+		break;
+	    
+	} while ( true );
+
+	assert ( current );
+
+	subtree_grade += current->subtree_grade;
+	subtree_grade -= (current->right_child) ?
+	    current->right_child->subtree_grade: 0;
+
+	return subtree_grade;
     }
 
     void insertNode(const T& val) {
@@ -401,7 +564,7 @@ public:
 
 
     void deleteNode(const T& val) {
-	Node* node;	
+	Node* node;
 
 	try {
 	    node = findVal(root,val);
@@ -521,7 +684,7 @@ public:
     //			Null if an allocation failed.
     void ToArray(T* array) {
 	int index = 0;
-	
+
 	if( !array )
 	    return;
 
@@ -618,6 +781,7 @@ public:
     class RootNodeExists {};
     class NodeDoesntExist{};
     class AvlAllocationError {};
+    class indexIsHigherThanSize {};
 
 private:
     class findNodeResult {
