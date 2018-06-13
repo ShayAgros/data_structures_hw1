@@ -7,13 +7,13 @@ namespace hw1 {
 
 class Player {
 
-    int id;
-    int score;
-	int clanID;
+    int _id;
+    int _score;
+	int _clanID;
 
     public:
-    Player(int id,int score, int ClandID) : id(id), score(score),
-		clanID(clanID) {}
+    Player(int _id,int _score, int ClandID) : _id(_id), _score(_score),
+		_clanID(_clanID) {}
 
     int getID();
 
@@ -24,15 +24,23 @@ class Player {
     ~Player() = default;
 
 
-    class Comp_by_score {
+    class CompareByScore {
 	public:
 	bool operator() (Player *p1, Player *p2) {
-		if (p1->score == p2->score) {
-			return (p1->id < p2->id);
+		if (p1->_score == p2->_score) {
+			return (p1->_id < p2->_id);
 		}		
-	    return (p1->score > p2->score);
+	    return (p1->_score > p2->_score);
     	}
     };
+
+	class CompareByID {
+	public:
+		bool operator() (Player *p1, Player *p2) {
+			return (p1->_id < p2->_id);
+		}
+	};
+
 
 };
 

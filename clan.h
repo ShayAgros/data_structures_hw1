@@ -7,7 +7,7 @@
 
 namespace hw1 {
 
-typedef AvlTree<Player*, Player::Comp_by_score> Players_Tree;
+typedef AvlTree<Player*, Player::CompareByScore> Players_Tree;
 
 class Clan {
 
@@ -17,8 +17,12 @@ class Clan {
 	MinHeap<int>::Node* _min_heap_node;
 
 public:
-	Clan(int _id) : _id(_id), _can_fight(true),
+
+	Clan() : _id(0), _can_fight(true),
 		_players_by_score(), _min_heap_node(NULL) {}
+
+	Clan(int id, MinHeap<int>::Node* min_heap_node) : _id(id), _can_fight(true),
+		_players_by_score(), _min_heap_node(min_heap_node) {}
 
 	~Clan() {}
 

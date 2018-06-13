@@ -4,14 +4,14 @@
 * 	Minimum Heap
 */
 
-#ifndef min_healp_d
+#ifndef min_heap_d
 #define min_heap_d
 
 #include <iostream>
 #include <assert.h>
 #include <math.h>
 
-#define HEAP_DEAFULT_SIZE 1
+#define HEAP_DEAFULT_SIZE 2
 
 namespace hw1 {
 
@@ -88,7 +88,7 @@ private:
 		}
 	}
 
-	void siftUp(int i) {
+	int siftUp(int i) {
 		if (i >= _size) {
 			throw HeapOutOfBandException();
 		}
@@ -97,7 +97,8 @@ private:
 			swap(i, father_index);
 			i = father_index;
 			father_index = getFatherIndex(i);
-		}		
+		}	
+		return i;
 	}
 
 	void resizeHeap() {
@@ -150,13 +151,14 @@ public:
 		}
 	}
 
-	void insert(const T& x) {
+	Node* insert(const T& x) {
 		if (_size == _array_size) {
 			resizeHeap();
 		}
 		_heap[_size] = new Node(_size, x);
 		_size++;
-		siftUp(_size - 1);
+		int new_element_index = siftUp(_size - 1);
+		return _heap[new_element_index];
 	}
 
 	void decKey(int index, const T& value) {
@@ -182,6 +184,14 @@ public:
 
 	const T& findMin() {
 		return _heap[0]->getData();
+	}
+
+	Node** toArray() {
+		return _heap;
+	}
+
+	int getSize() {
+		return _size;
 	}
 	
 	class HeapOutOfBandException {};

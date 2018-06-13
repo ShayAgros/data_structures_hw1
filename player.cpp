@@ -3,15 +3,15 @@
 namespace hw1 {
 	
     int Player::getID() {
-		return this->id;
+		return this->_id;
     }
 
     int Player::getScore() {
-		return this->score;
+		return this->_score;
     }
 
 	int Player::getClanID() {
-		return this->clanID;
+		return this->_clanID;
 	}
 
 
