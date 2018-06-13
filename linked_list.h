@@ -4,22 +4,7 @@
 #include <cstddef>
 #include <exception>
 
-class ITER_RESULT : public std::exception {
-};
-class ITER_REACHED_END : public ITER_RESULT {
-};
-class LIST_RESULT : public std::exception {
-};
-class LIST_ALLOCATION_ERROR : public LIST_RESULT {
-};
-class LIST_KEY_ALREADY_EXISTS : public LIST_RESULT {
-};
-class LIST_KEY_DOESNT_EXIST : public LIST_RESULT {
-};
-class LIST_NULL_INPUT : public LIST_RESULT {
-};
-class LIST_SUCCESS : public LIST_RESULT {
-};
+namespace hw1 {
 
 template<typename KeyType, typename ValueType>
 class Linked_List {
@@ -114,7 +99,7 @@ public:
 		// @throw ITER_REACHED_END if current node is NULL;
 		iterator& Next() {
 			if (m_current == NULL) {
-				throw ITER_REACHED_END();
+				throw IterReachedEndException();
 			}
 			m_current = m_current->GetNext();
 			return *this;
@@ -124,7 +109,7 @@ public:
 		// @throw ITER_REACHED_END if current node is NULL;
 		ValueType GetValue() const {
 			if (m_current == NULL) {
-				throw ITER_REACHED_END();
+				throw IterReachedEndException();
 			}
 			return m_current->GetValue();
 		}
@@ -133,7 +118,7 @@ public:
 		// @throw ITER_REACHED_END if current node is NULL;
 		void SetValue(const ValueType& value) {
 			if (m_current == NULL) {
-				throw ITER_REACHED_END();
+				throw IterReachedEndException();
 			}
 			m_current->SetValue(value);
 		}
@@ -142,7 +127,7 @@ public:
 		// @throw ITER_REACHED_END if current node is NULL;
 		void SetKey(const KeyType& key) {
 			if (m_current == NULL) {
-				throw ITER_REACHED_END();
+				throw IterReachedEndException();
 			}
 			m_current->SetKey(key);
 		}
@@ -164,7 +149,7 @@ public:
 		// @throw ITER_REACHED_END if current node is NULL;
 		KeyType operator*() const {
 			if (m_current == NULL) {
-				throw ITER_REACHED_END();
+				throw IterReachedEndException();
 			}
 			return m_current->GetKey();
 		}
@@ -217,7 +202,7 @@ public:
 	// Returns ->
 	//			true if the node with the key exists.
 	//			false otherwise.
-	bool DoesExist(const KeyType &key) const {
+	bool doesExist(const KeyType &key) const {
 		Node* current_node = m_ghost->GetNext();
 		while (current_node != NULL) {
 			if (current_node->GetKey() == key) {
@@ -235,9 +220,9 @@ public:
 	//			the value of the node with the given key.
 	// Throws ->
 	//			LIST_KEY_DOESNT_EXIST - if a node with the given key does not exist.
-	ValueType Find(const KeyType &key) const {
-		if (!DoesExist(key)) {
-			throw LIST_KEY_DOESNT_EXIST();
+	ValueType find(const KeyType &key) const {
+		if (!doesExist(key)) {
+			throw ListKeyDoesntExistException();
 		}
 		Node* current_node = m_ghost->GetNext();
 		while (current_node != NULL) {
@@ -246,7 +231,7 @@ public:
 			}
 			current_node = current_node->GetNext();
 		}
-		throw LIST_KEY_DOESNT_EXIST();
+		throw ListKeyDoesntExistException();
 	}
 
 	// Inserts a new node with the given key and value.
@@ -256,14 +241,14 @@ public:
 	// Throws ->
 	//			LIST_KEY_ALREADY_EXISTS - if a node with the given key already exists.
 	//			LIST_ALLOCATION_ERROR - if an allocation failed.
-	void Insert(const KeyType &key, const ValueType &value) {
-		if (DoesExist(key)) {
-			throw LIST_KEY_ALREADY_EXISTS();
+	void insert(const KeyType &key, const ValueType &value) {
+		if (doesExist(key)) {
+			throw ListKeyAlreadyExistsException();
 		}
 		Node* next_node = m_ghost->GetNext();
 		Node* new_node = new Node(key, value);
 		if (new_node == NULL) {
-			throw LIST_ALLOCATION_ERROR();
+			throw ListAllocationException();
 		}
 		new_node->SetNext(next_node);
 		m_ghost->SetNext(new_node);
@@ -274,9 +259,9 @@ public:
 	//			*key - the key of the node we want to remove.
 	// Throws ->
 	//			LIST_KEY_DOESNT_EXIST - if a node with the given key does not exist.
-	void Remove(const KeyType &key) {
-		if (!DoesExist(key)) {
-			throw LIST_KEY_DOESNT_EXIST();
+	void remove(const KeyType &key) {
+		if (!doesExist(key)) {
+			throw ListKeyDoesntExistException();
 		}
 		Node* current_node = m_ghost;
 		while ((current_node->GetNext())->GetKey() != key) {
@@ -292,6 +277,18 @@ private:
 
 };
 
+class IterException : public std::exception {
+};
+class IterReachedEndException : public IterException {
+};
+class ListException : public std::exception {
+};
+class ListAllocationException : public ListException {
+};
+class ListKeyAlreadyExistsException : public ListException {
+};
+class ListKeyDoesntExistException : public ListException {
+};
 
-
+} /* end namespace */
 #endif

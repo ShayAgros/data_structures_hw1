@@ -4,28 +4,21 @@
 #include "linked_list.h"
 #include <exception>
 
-class HASH_RESULT : public std::exception {
-};
-class HASH_ALREADY_MEMBER : public HASH_RESULT {
-};
-class HASH_NOT_A_MEMBER : public HASH_RESULT {
-};
-class HASH_ALLOCATION_ERROR : public HASH_RESULT {
-};
+namespace hw1 {
 
 const static int NOT_FOUND = -1;
-const static int default_size = 8;
+const static int DEFAULT_SIZE = 8;
 
 template<typename KeyType, typename ValueType>
 class Hash {	
 public:
 
 	// C'tor
-	Hash(int(*hash_func)(KeyType, int)) : m_size(default_size),
-		m_sum_of_obj(0), m_HashFunc(hash_func) {
-		m_table = new Linked_List<KeyType, ValueType>*[m_size];
-		for (int i = 0; i < m_size; i++) {
-			m_table[i] = new Linked_List<KeyType, ValueType>();
+	Hash(int(*hash_func)(KeyType, int)) : _size(DEFAULT_SIZE),
+		_sum_of_obj(0), _HashFunc(hash_func) {
+		_table = new Linked_List<KeyType, ValueType>*[_size];
+		for (int i = 0; i < _size; i++) {
+			_table[i] = new Linked_List<KeyType, ValueType>();
 		}
 	}
 
@@ -34,10 +27,10 @@ public:
 
 	// D'tor
 	~Hash() {
-		for (int i = 0; i < m_size; i++) {
-			delete(m_table[i]);
+		for (int i = 0; i < _size; i++) {
+			delete(_table[i]);
 		}
-		delete[] m_table;
+		delete[] _table;
 	}
 
 	// Finds and returns the value of the requested object.
@@ -46,14 +39,14 @@ public:
 	// Returns ->
 	//			The object if it exists in the hash table.
 	// Throws ->
-	//			HASH_NOT_A_MEMBER if the object does not exist in the table
-	ValueType Find(const KeyType &key) const {
-		int index = m_HashFunc(key, m_size);
-		Linked_List<KeyType, ValueType>* list = m_table[index];
-		if (!(list->DoesExist(key))) {
-			throw HASH_NOT_A_MEMBER();
+	//			HashNotAMemberException if the object does not exist in the table
+	ValueType find(const KeyType &key) const {
+		int index = _HashFunc(key, _size);
+		Linked_List<KeyType, ValueType>* list = _table[index];
+		if (!(list->doesExist(key))) {
+			throw HashNotAMemberException();
 		}
-		return list->Find(key);
+		return list->find(key);
 	}
 
 	// Returns whether an object with the given key exists
@@ -62,10 +55,10 @@ public:
 	// Returns ->
 	//			true if an object with the given key exists.
 	//			false otherwise.
-	bool DoesExist(const KeyType &key) const {
-		int index = m_HashFunc(key, m_size);
-		Linked_List<KeyType, ValueType>* list = m_table[index];
-		return list->DoesExist(key);
+	bool doesExist(const KeyType &key) const {
+		int index = _HashFunc(key, _size);
+		Linked_List<KeyType, ValueType>* list = _table[index];
+		return list->doesExist(key);
 	}
 
 	// Inserts an object into the hash table
@@ -73,22 +66,22 @@ public:
 	// Parameters ->
 	//			*obj - the object we want to add.
 	// Throws ->
-	//			HASH_ALREADY_MEMBER - if the object as already been added.
-	//			HASH_ALLOCATION_ERROR - if an alllocation failed.
-	void Insert(const KeyType &key, const ValueType &value) {
-		if (DoesExist(key)) {
-			throw HASH_ALREADY_MEMBER();
+	//			HashAlreadyMemberException - if the object as already been added.
+	//			HashAllocationException - if an alllocation failed.
+	void insert(const KeyType &key, const ValueType &value) {
+		if (doesExist(key)) {
+			throw HashAlreadyMemberException();
 		}
-		int index = m_HashFunc(key, m_size);
-		Linked_List<KeyType, ValueType>* list = m_table[index];
+		int index = _HashFunc(key, _size);
+		Linked_List<KeyType, ValueType>* list = _table[index];
 		try {
-			list->Insert(key, value);
-		} catch (const LIST_ALLOCATION_ERROR&) {
-			throw HASH_ALLOCATION_ERROR();
+			list->insert(key, value);
+		} catch (const ListAllocationException&) {
+			throw HashAllocationException();
 		}
-		m_sum_of_obj++;
-		if (m_sum_of_obj == m_size) {
-			ResizeTable(m_size * 2);
+		_sum_of_obj++;
+		if (_sum_of_obj == _size) {
+			resizeTable(_size * 2);
 		}
 	}
 
@@ -97,67 +90,45 @@ public:
 	// Parameters ->
 	//			*key - the object we want to remove
 	// Throws ->
-	//			HASH_NOT_A_MEMBER - if the object is not a member of the hash table.
-	void Remove(const KeyType &key) {
-		if (!DoesExist(key)) {
-			throw HASH_NOT_A_MEMBER();
+	//			HashNotAMemberException - if the object is not a member of the hash table.
+	void remove(const KeyType &key) {
+		if (!doesExist(key)) {
+			throw HashNotAMemberException();
 		}
-		int index = m_HashFunc(key, m_size);
-		Linked_List<KeyType, ValueType>* list = m_table[index];
-		list->Remove(key);
-		m_sum_of_obj--;
-		if ((m_sum_of_obj <= (m_size / 4)) && (m_size > default_size)) {
-			ResizeTable(m_size / 2);
-		}
-	}
-
-	// Iterates over the whole hash table, and performs a certain function on all the objects.
-	// Parameters ->
-	//			*IterFunc - the function that we want to perform on all the objects.
-	void IterateOverHash(void(*IterFunc)(ValueType)) {
-		for (int i = 0; i < m_size; i++) {
-			typename Linked_List<KeyType, ValueType>::iterator iter =
-				typename Linked_List<KeyType, ValueType>::iterator(m_table[i]);
-			bool reached_end = false;
-			iter.Next();
-			while (!reached_end) {
-				ValueType value;
-				try {
-					value = iter.GetValue();
-					IterFunc(value);
-					iter.Next();
-				} catch (const ITER_REACHED_END&) {
-					reached_end = true;
-				}
-			}
+		int index = _HashFunc(key, _size);
+		Linked_List<KeyType, ValueType>* list = _table[index];
+		list->remove(key);
+		_sum_of_obj--;
+		if ((_sum_of_obj <= (_size / 4)) && (_size > DEFAULT_SIZE)) {
+			resizeTable(_size / 2);
 		}
 	}
 
 private:
-	int m_size;
-	int m_sum_of_obj;
-	int(*m_HashFunc)(KeyType, int);
-	Linked_List<KeyType, ValueType>** m_table;
+	int _size;
+	int _sum_of_obj;
+	int(*_HashFunc)(KeyType, int);
+	Linked_List<KeyType, ValueType>** _table;
 
 	// Changes the size of the array and relocates all the objects.
 	// Throws ->
-	//			HASH_ALLOCATION_ERROR - if an allocation failed
-	void ResizeTable(int new_size) {
+	//			HashAllocationException - if an allocation failed
+	void resizeTable(int new_size) {
 		Linked_List<KeyType, ValueType>** new_table =
 			new Linked_List<KeyType, ValueType>*[new_size];
 		if (!new_table) {
-			throw HASH_ALLOCATION_ERROR();
+			throw HashAllocationException();
 		}
 		for (int i = 0; i < new_size; i++) {
 			new_table[i] = new Linked_List<KeyType, ValueType>();
 			if (!new_table[i]) {
-				throw HASH_ALLOCATION_ERROR();
+				throw HashAllocationException();
 			}
 		}
-		Linked_List<KeyType, ValueType>** old_table = m_table;
-		int old_size = m_size;
-		m_table = new_table;
-		m_size = new_size;
+		Linked_List<KeyType, ValueType>** old_table = _table;
+		int old_size = _size;
+		_table = new_table;
+		_size = new_size;
 		for (int i = 0; i < old_size; i++) {
 			typename Linked_List<KeyType, ValueType>::iterator iter =
 				typename Linked_List<KeyType, ValueType>::iterator(old_table[i]);
@@ -171,11 +142,11 @@ private:
 				try {
 					key = *iter;
 					value = iter.GetValue();
-					new_index = m_HashFunc(key, new_size);
+					new_index = _HashFunc(key, new_size);
 					iter.Next();
-					new_table[new_index]->Insert(key, value);
-					old_table[i]->Remove(key);
-				} catch (const ITER_REACHED_END&) {
+					new_table[new_index]->insert(key, value);
+					old_table[i]->remove(key);
+				} catch (const IterReachedEndException&) {
 					reached_end = true;
 				}
 			}
@@ -185,7 +156,18 @@ private:
 		}
 		delete[] old_table;
 	}
-
 }; //template
+
+class HashException : public std::exception {
+};
+class HashAlreadyMemberException : public HashException {
+};
+class HashNotAMemberException : public HashException {
+};
+class HashAllocationException : public HashException {
+};
+
+
+} /* end namespace */
 
 #endif /** HASH_H **/
