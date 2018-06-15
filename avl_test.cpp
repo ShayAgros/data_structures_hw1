@@ -10,6 +10,20 @@ using std::ostream;
 						else std::cout << #b <<  ": [FAIL]" << std::endl;
 
 
+class compare {
+	public:
+	bool operator() (int a,int b) {
+		return (a<b);
+	}
+};
+
+class getGrade {
+    public:
+	int operator()(int a) {
+	return a;
+	}
+};
+
 bool avlInsertTest () {
 	AvlTree<int> tree;
 	const int num_values = 1200;
@@ -18,25 +32,25 @@ bool avlInsertTest () {
 		try {
 			tree.insertNode(i);
 		} catch (AvlTree<int>::NodeExists& ex) {
-		    return false;
+			return false;
 		} catch (...) {
-		    return false;
+			return false;
 		}
 	}
 	if( tree.getSize() != num_values)
-	    return false;
+		return false;
 
 	//std::cout << j << " values inserted" << std::endl;
 
 	for(int i=num_values; i > 0; i--) {
-	    try {
-		tree.insertNode(i);
-		return false;
-	    } catch (AvlTree<int>::NodeExists& ex) {
+		try {
+			tree.insertNode(i);
+			return false;
+		} catch (AvlTree<int>::NodeExists& ex) {
 
-	    } catch (...) {
-		return false;
-	    }
+		} catch (...) {
+			return false;
+		}
 	}
 
 /*
@@ -83,24 +97,24 @@ bool avlFindValTest() {
 		try {
 			tree.insertNode(i);
 		} catch (AvlTree<int>::NodeExists& ex) {
-		    return false;
+			return false;
 		} catch (...) {
-		    return false;
+			return false;
 		}
 	}
 
 	for(int i=1; i<= 2*num_values ; i++) {
-	    try {
+		try {
 		tree.findValCopyInTree(i);
 
 		if( i>num_values)
-		    return false;
-	    } catch (AvlTree<int>::NodeDoesntExist& exc) {
+			return false;
+		} catch (AvlTree<int>::NodeDoesntExist& exc) {
 		if(i<=num_values)
-		    return false;
-	    } catch (...) {
-		return false;
-	    }
+			return false;
+		} catch (...) {
+			return false;
+		}
 
 	}
 
@@ -115,51 +129,51 @@ bool avlDeleteTest() {
 		try {
 			tree.insertNode(i);
 		} catch (AvlTree<int>::NodeExists& ex) {
-		    return false;
+			return false;
 		} catch (...) {
-		    return false;
+			return false;
 		}
 	}
 	if( tree.getSize() != num_values)
-	    return false;
+		return false;
 
 	for(int i=num_values+1; i < num_values*2; i++) {
-	    try {
-		tree.deleteNode(i);
-		return false;
-	    } catch (AvlTree<int>::NodeDoesntExist& ex) {
+		try {
+			tree.deleteNode(i);
+			return false;
+		} catch (AvlTree<int>::NodeDoesntExist& ex) {
 
-	    } catch (...) {
-		return false;
-	    }
+		} catch (...) {
+			return false;
+		}
 	}
 
 	for(int i=1; i<=(num_values/2);i++) {
-	    try {
-		tree.deleteNode(i);
-	    } catch (AvlTree<int>::NodeDoesntExist& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.deleteNode(i);
+		} catch (AvlTree<int>::NodeDoesntExist& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 
 	if ( tree.getSize() != (num_values/2))
-	    return false;
+		return false;
 
 
 	for(int i=((num_values/2)+1); i<=num_values; i++){
-	    try {
-		tree.deleteNode(i);
-	    } catch (AvlTree<int>::NodeDoesntExist& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.deleteNode(i);
+		} catch (AvlTree<int>::NodeDoesntExist& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 
 	if(tree.getSize() != 0)
-	    return false;
+		return false;
 
 
 	return true;
@@ -174,53 +188,53 @@ bool avlDeleteTest2() {
 		try {
 			tree.insertNode(i);
 		} catch (AvlTree<int>::NodeExists& ex) {
-		    return false;
+			return false;
 		} catch (...) {
-		    return false;
+			return false;
 		}
 	}
 	if( tree.getSize() != num_values)
-	    return false;
+		return false;
 
 	for(int i=1; i<=(num_values);i++) {
-	    try {
-		tree.deleteNode(i);
-	    } catch (AvlTree<int>::NodeDoesntExist& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.deleteNode(i);
+		} catch (AvlTree<int>::NodeDoesntExist& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 
 	if ( tree.getSize() != 0)
-	    return false;
+		return false;
 
 
 	for (int i=1; i<=num_values;i++) {
 		try {
-		    tree.insertNode(i);
+			tree.insertNode(i);
 		} catch (AvlTree<int>::NodeExists& ex) {
-		    return false;
+			return false;
 		} catch (...) {
-		    return false;
+			return false;
 		}
 	}
 	if( tree.getSize() != num_values)
-	    return false;
+		return false;
 
 
 	for(int i=((num_values/2)); i<num_values; i++){
-	    try {
-		tree.deleteNode(i);
-	    } catch (AvlTree<int>::NodeDoesntExist& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.deleteNode(i);
+		} catch (AvlTree<int>::NodeDoesntExist& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 
 	if( tree.getSize() != (num_values - (num_values - (num_values/2))) )
-	    return false;
+		return false;
 
 
 
@@ -234,43 +248,94 @@ bool avlFindIndexTest() {
 	const int num_values = 1200;
 
 	for (int i=0; i<=num_values;i++) {
-	    try {
-		tree.insertNode(i);
-	    } catch (AvlTree<int>::NodeExists& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.insertNode(i);
+		} catch (AvlTree<int>::NodeExists& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 	if( tree.getSize() != num_values+1)
-	    return false;
+		return false;
 
 	for (int i=0; i<=num_values;i++) {
-	    try {
-		int val = tree.findValByIndex(i);
+		try {
+			int val = tree.findValByIndex(i);
 		
-		if(val != i)
-		    return false;
-	    } catch (AvlTree<int>::indexIsHigherThanSize& ex) {
-		return false;
-	    } catch (...) {
-		return false;
-	    }
+			if(val != i)
+				return false;
+		} catch (AvlTree<int>::indexIsHigherThanSize& ex) {
+			return false;
+		} catch (...) {
+			return false;
+		}
 	}
 
 
 	for (int i=num_values+1; i<=num_values+100;i++) {
-	    try {
-		tree.findValByIndex(i);
-		return false;
-	    } catch (AvlTree<int>::indexIsHigherThanSize& ex) {
-	    } catch (...) {
-		return false;
-	    }
+		try {
+			tree.findValByIndex(i);
+			return false;
+		} catch (AvlTree<int>::indexIsHigherThanSize& ex) {
+		} catch (...) {
+			return false;
+		}
 	}
 
     return true;
 }
+
+
+bool avlGetGradeTest() {
+
+    AvlTree<int,compare,getGrade> tree;
+    const int num_values = 1200;
+
+    for (int i=0; i<=num_values;i++) {
+	try {
+		tree.insertNode(i);
+	} catch (AvlTree<int,compare,getGrade>::NodeExists& ex) {
+		return false;
+	} catch (...) {
+		return false;
+	}
+    }
+    if( tree.getSize() != num_values+1)
+	return false;
+
+
+    for (int i=0; i<=num_values;i++) {
+	try {
+		int grade = tree.findGradeByIndex(i);
+
+		int expected_grade=0;
+		for(int j=0;j<=i;j++)
+		expected_grade +=j;
+
+		if(grade != expected_grade)
+			return false;
+	} catch (AvlTree<int,compare,getGrade>::indexIsHigherThanSize& ex) {
+		return false;
+	} catch (...) {
+		return false;
+	}
+    }
+
+
+    for (int i=num_values+1; i<=num_values+100;i++) {
+	try {
+		tree.findGradeByIndex(i);
+		return false;
+	} catch (AvlTree<int,compare,getGrade>::indexIsHigherThanSize& ex) {
+	} catch (...) {
+		return false;
+	}
+    }
+    return true;
+}
+
+
 
 /**
 int main () {
@@ -280,27 +345,8 @@ int main () {
 	RUN_TEST(avlDeleteTest);
 	RUN_TEST(avlDeleteTest2);
 	RUN_TEST(avlFindIndexTest);
+	RUN_TEST(avlGetGradeTest);
 
-
-/*
- *
- *        hw1::Oasis oasis;
- *        oasis.addClan(1);
- *        oasis.addClan(2);
- *        oasis.addClan(3);
- *
- *        oasis.addPlayer(10, 10);
- *        oasis.addPlayer(11, 11);
- *        oasis.addPlayer(12, 12);
- *        oasis.addPlayer(13, 13);
- *
- *        oasis.joinClan(10, 1);
- *        oasis.joinClan(11, 2);
- *        oasis.joinClan(12, 1);
- *        oasis.joinClan(13, 2);
- *
- *        oasis.uniteClans(1, 2);
- *
  
 	return 0;
 }*/
