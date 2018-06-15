@@ -10,9 +10,13 @@ Oasis::Oasis() : _clans(moduloHash) {}
 
 
 void Oasis::init(int n, int* clanIDs) {
+
 	_can_fight_clans.MakeHeap(n, clanIDs);
+
 	MinHeap<int>::Node** can_fight_clans_array = _can_fight_clans.toArray();
+
 	int size = _can_fight_clans.getSize();
+
 	for (int i = 0; i < size; i++) {
 		int _clanID = can_fight_clans_array[i]->getData();
 		_clans.insert(_clanID, Clan(_clanID, can_fight_clans_array[i]));
@@ -24,7 +28,7 @@ void Oasis::addClan(int _clanID) {
 		throw InvalidInputException();
 	}
 	if (_clans.doesExist(_clanID)) {
-		throw HashAlreadyMemberException();
+		throw Hash<int, Clan>::HashAlreadyMemberException();
 	}
 	MinHeap<int>::Node* min_heap_node = _can_fight_clans.insert(_clanID);
 	_clans.insert(_clanID, Clan(_clanID, min_heap_node));

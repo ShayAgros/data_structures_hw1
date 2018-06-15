@@ -272,23 +272,22 @@ public:
 		delete(node_to_remove);
 	}
 
+	class IterException : public std::exception {
+	};
+	class IterReachedEndException : public IterException {
+	};
+	class ListException : public std::exception {
+	};
+	class ListAllocationException : public ListException {
+	};
+	class ListKeyAlreadyExistsException : public ListException {
+	};
+	class ListKeyDoesntExistException : public ListException {
+	};
 private:
 	Node* m_ghost;
-
 };
 
-class IterException : public std::exception {
-};
-class IterReachedEndException : public IterException {
-};
-class ListException : public std::exception {
-};
-class ListAllocationException : public ListException {
-};
-class ListKeyAlreadyExistsException : public ListException {
-};
-class ListKeyDoesntExistException : public ListException {
-};
 
 } /* end namespace */
 #endif

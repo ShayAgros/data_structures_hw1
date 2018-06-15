@@ -336,8 +336,6 @@ bool avlGetGradeTest() {
 }
 
 
-
-/**
 int main () {
 
 	RUN_TEST(avlInsertTest);
@@ -347,6 +345,5 @@ int main () {
 	RUN_TEST(avlFindIndexTest);
 	RUN_TEST(avlGetGradeTest);
 
- 
 	return 0;
-}*/
+}

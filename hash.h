@@ -11,6 +11,10 @@ const static int DEFAULT_SIZE = 8;
 
 template<typename KeyType, typename ValueType>
 class Hash {	
+
+// abbreviate some common names
+typedef Linked_List<KeyType, ValueType> LinkedListClass;
+
 public:
 
 	// C'tor
@@ -73,10 +77,10 @@ public:
 			throw HashAlreadyMemberException();
 		}
 		int index = _HashFunc(key, _size);
-		Linked_List<KeyType, ValueType>* list = _table[index];
+		Linked_List<KeyType, ValueType> *list = _table[index];
 		try {
 			list->insert(key, value);
-		} catch (const ListAllocationException&) {
+		} catch (typename LinkedListClass::ListAllocationException &exc) {
 			throw HashAllocationException();
 		}
 		_sum_of_obj++;
@@ -104,6 +108,16 @@ public:
 		}
 	}
 
+
+	class HashException : public std::exception {
+	};
+	class HashAlreadyMemberException : public HashException {
+	};
+	class HashNotAMemberException : public HashException {
+	};
+	class HashAllocationException : public HashException {
+	};
+
 private:
 	int _size;
 	int _sum_of_obj;
@@ -114,8 +128,10 @@ private:
 	// Throws ->
 	//			HashAllocationException - if an allocation failed
 	void resizeTable(int new_size) {
+
 		Linked_List<KeyType, ValueType>** new_table =
 			new Linked_List<KeyType, ValueType>*[new_size];
+
 		if (!new_table) {
 			throw HashAllocationException();
 		}
@@ -132,6 +148,7 @@ private:
 		for (int i = 0; i < old_size; i++) {
 			typename Linked_List<KeyType, ValueType>::iterator iter =
 				typename Linked_List<KeyType, ValueType>::iterator(old_table[i]);
+
 			bool reached_end = false;
 			iter.Next();
 			// sum_of_obj?
@@ -146,7 +163,7 @@ private:
 					iter.Next();
 					new_table[new_index]->insert(key, value);
 					old_table[i]->remove(key);
-				} catch (const IterReachedEndException&) {
+				} catch (typename LinkedListClass::IterReachedEndException& exc) {
 					reached_end = true;
 				}
 			}
@@ -157,15 +174,6 @@ private:
 		delete[] old_table;
 	}
 }; //template
-
-class HashException : public std::exception {
-};
-class HashAlreadyMemberException : public HashException {
-};
-class HashNotAMemberException : public HashException {
-};
-class HashAllocationException : public HashException {
-};
 
 
 } /* end namespace */

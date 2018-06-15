@@ -13,7 +13,7 @@ class Player {
 
     public:
     Player(int _id,int _score, int ClandID) : _id(_id), _score(_score),
-		_clanID(_clanID) {}
+		_clanID(ClandID) {}
 
     int getID();
 
