@@ -7,7 +7,7 @@
 
 namespace hw1 {
 
-typedef AvlTree<Player, Player::CompareByScore> Players_Tree;
+typedef AvlTree<Player, Player::CompareByScore ,Player::GetScore > Players_Tree;
 
 class Clan {
 
@@ -27,6 +27,21 @@ public:
 	~Clan() {}
 
 	void addPlayer(int player_id, int score);
+
+	/* returns clan's size */
+	int getSize();
+	/* returns k players which have the
+		* highest grades
+		*/
+	int getStrongest(int k);
+
+	/*disables clan's ability to fight*/
+	void setClanLost();
+
+	/* checks it clan can fight.
+		* returns 'true' if so
+		*/
+	bool canFight();
 
 	class memoryAllocFailure {};
 };

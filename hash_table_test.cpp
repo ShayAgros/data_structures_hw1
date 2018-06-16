@@ -5,9 +5,6 @@
 #include <assert.h>
 
 using hw1::Hash;
-using hw1::HashAlreadyMemberException;
-using hw1::HashNotAMemberException;
-
 
 #define RUN_TEST(b)	if( (b)() ) std::cout << #b << ": [PASS]" << std::endl; \
 						else std::cout << #b <<  ": [FAIL]" << std::endl;
@@ -57,9 +54,9 @@ bool hashTableTest() {
 			return false;
 		}
 		try {
-			MyDouble d2 = hash.find(MyInt(i+100));
+			hash.find(MyInt(i+100));
 			return false;
-		} catch (const HashNotAMemberException& ex) {
+		} catch (Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
 
 		}
 
@@ -69,7 +66,7 @@ bool hashTableTest() {
 		try {
 			hash.insert(MyInt(i), MyDouble(i));
 			return false;
-		} catch (const HashAlreadyMemberException& ex) {
+		} catch (Hash<MyInt, MyDouble>::HashAlreadyMemberException& ex) {
 			
 		}
 		
@@ -84,7 +81,7 @@ bool hashTableTest() {
 		try {
 			hash.remove(MyInt(i));
 			return false;
-		} catch (const HashNotAMemberException& ex) {
+		} catch (Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
 
 		}
 	}

@@ -10,6 +10,11 @@
 namespace hw1 {
 
 class Oasis {
+
+	Hash<int, Clan> _clans;
+	AvlTree<int> _players_by_ID;
+	MinHeap<int> _can_fight_clans;
+
 public:
 
 	Oasis();
@@ -21,18 +26,16 @@ public:
 
 	void addPlayer(int player_id, int score, int clan_id);
 
-	void clanFight(int clan1, int clan2, int k1, int k2);
+	void clanFight(int clan_id1, int clan_id2, int k1, int k2);
 
 	int getMinClan();
 
 	void quit();
 
-private:
-	Hash<int, Clan> _clans;
-	AvlTree<int> _players_id;
-	MinHeap<int> _can_fight_clans;
-
 	class InvalidInputException {};
+	class clanDosntExist {} ;
+	class clanDoesntHaveEnoughPlayers {};
+	class clanCantFight {};
 
 };
 

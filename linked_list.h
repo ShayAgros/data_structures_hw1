@@ -11,7 +11,6 @@ class Linked_List {
 protected:
 
 	class Node {
-	private:
 
 		KeyType m_key;
 		ValueType m_value;
@@ -221,16 +220,20 @@ public:
 	// Throws ->
 	//			LIST_KEY_DOESNT_EXIST - if a node with the given key does not exist.
 	ValueType find(const KeyType &key) const {
+
 		if (!doesExist(key)) {
 			throw ListKeyDoesntExistException();
 		}
+
 		Node* current_node = m_ghost->GetNext();
+
 		while (current_node != NULL) {
 			if (current_node->GetKey() == key) {
 				return current_node->GetValue();
 			}
 			current_node = current_node->GetNext();
 		}
+
 		throw ListKeyDoesntExistException();
 	}
 

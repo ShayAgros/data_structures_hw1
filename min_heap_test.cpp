@@ -40,7 +40,6 @@ bool heapInsertDeleteTest() {
 	return true;
 }
 
-/**
 int main() {
 
 	RUN_TEST(heapMakeHeapTest);
@@ -48,4 +47,3 @@ int main() {
 
 	return 0;
 }
-*/

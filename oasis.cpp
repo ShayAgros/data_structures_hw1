@@ -40,7 +40,37 @@ void Oasis::addPlayer(int player_id, int score, int clan_id) {
 	}
 }
 
-void Oasis::clanFight(int clan1, int clan2, int k1, int k2) {
+void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
+
+	int k1_grade, k2_grade;
+	Clan *losing_clan;
+
+	if ( !_clans.doesExist(clan_id1) || !_clans.doesExist(clan_id2) )
+		throw clanDosntExist();
+
+	Clan clan1 = _clans.find(clan_id1);
+	Clan clan2 = _clans.find(clan_id2);
+
+
+	if ( !clan1.canFight() || !clan2.canFight() )
+		throw clanCantFight();
+
+	if ( clan1.getSize() < k1 || clan2.getSize() < k2)
+		throw clanDoesntHaveEnoughPlayers();
+
+	k1_grade = clan1.getStrongest(k1);
+	k2_grade = clan2.getStrongest(k2);
+
+	if ( k1_grade == k2_grade )
+		losing_clan = (clan_id2 < clan_id1) ? &clan2 : &clan1 ;
+	else
+		losing_clan = (k2_grade < k1_grade) ? &clan2 : &clan1 ;
+
+	losing_clan->setClanLost();
+
+	//we make the losing clan to be "minimum clan"
+	//_can_fight_clans.decKey(-1, *losing_clan);
+	//_can_fight_clans.delMin();
 
 }
 

@@ -9,7 +9,7 @@ class Player {
 
     int _id;
     int _score;
-	int _clan_id;
+    int _clan_id;
 
     public:
     Player(int id,int score, int clan_id) : _id(id), _score(score),
@@ -19,7 +19,7 @@ class Player {
 
     int getScore();
 
-	int getClanID();
+    int getClanID();
 
     ~Player() = default;
 
@@ -30,17 +30,23 @@ class Player {
 		if (p1._score == p2._score) {
 			return (p1._id < p2._id);
 		}		
-	    return (p1._score > p2._score);
-    	}
+		return (p1._score > p2._score);
+	}
     };
 
-	class CompareByID {
-	public:
-		bool operator() (Player *p1, Player *p2) {
-			return (p1->_id < p2->_id);
-		}
-	};
+    class CompareByID {
+    public:
+	bool operator() (Player *p1, Player *p2) {
+		return (p1->_id < p2->_id);
+	}
+    };
 
+    class GetScore {
+    public:
+	bool operator() (Player *p1) {
+		return p1->getScore();
+	}
+    };
 
 };
 

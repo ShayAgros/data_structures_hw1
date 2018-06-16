@@ -16,6 +16,8 @@ $(OUTPUT): main1.cpp $(OBJ)
 
 test: $(OBJ)
 	g++ $(CFLAGS) -o test_avl $^ avl_test.cpp
+	g++ $(CFLAGS) -o test_hash $^ hash_table_test.cpp
+	g++ $(CFLAGS) -o test_heap $^ min_heap_test.cpp
 
 .PHONY: clean
 clean:
