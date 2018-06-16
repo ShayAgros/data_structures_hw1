@@ -161,7 +161,7 @@ public:
 		return _heap[new_element_index];
 	}
 
-	void decKey(int index, T& value) {
+	void decKey(int index, const T& value) {
 		if (_compare(value, _heap[index]->getData())) {
 			_heap[index]->setData(value);
 		}
