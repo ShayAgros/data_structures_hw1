@@ -13,13 +13,13 @@ protected:
 	class Node {
 
 		KeyType m_key;
-		ValueType m_value;
+		ValueType* m_value;
 		Node* m_next;
 
 	public:
 
 		// C'tor
-		Node(KeyType const &key, ValueType const &value) :
+		Node(KeyType const &key, ValueType* value) :
 			m_key(key), m_value(value), m_next(NULL) {
 		}
 
@@ -38,7 +38,7 @@ protected:
 		}
 
 		// Returns the value of the node
-		ValueType& GetValue() {
+		ValueType* GetValue() {
 			return m_value;
 		}
 
@@ -57,7 +57,7 @@ protected:
 		// Sets the Value to the given value
 		// Parameters ->
 		//		*value -> the value we want to change to
-		void SetValue(const ValueType& value) {
+		void SetValue(const ValueType* value) {
 			m_value = value;
 		}
 
@@ -106,7 +106,7 @@ public:
 
 		// Returns the value of the node the iterator points to
 		// @throw ITER_REACHED_END if current node is NULL;
-		ValueType GetValue() const {
+		ValueType* GetValue() const {
 			if (m_current == NULL) {
 				throw IterReachedEndException();
 			}
@@ -115,7 +115,7 @@ public:
 
 		// Sets the value of the node the iterator points to
 		// @throw ITER_REACHED_END if current node is NULL;
-		void SetValue(const ValueType& value) {
+		void SetValue(const ValueType* value) {
 			if (m_current == NULL) {
 				throw IterReachedEndException();
 			}
@@ -219,7 +219,7 @@ public:
 	//			the value of the node with the given key.
 	// Throws ->
 	//			LIST_KEY_DOESNT_EXIST - if a node with the given key does not exist.
-	ValueType& find(const KeyType &key) {
+	ValueType* find(const KeyType &key) {
 
 		if (!doesExist(key)) {
 			throw ListKeyDoesntExistException();
@@ -244,7 +244,7 @@ public:
 	// Throws ->
 	//			LIST_KEY_ALREADY_EXISTS - if a node with the given key already exists.
 	//			LIST_ALLOCATION_ERROR - if an allocation failed.
-	void insert(const KeyType &key, const ValueType &value) {
+	void insert(const KeyType &key, ValueType* value) {
 		if (doesExist(key)) {
 			throw ListKeyAlreadyExistsException();
 		}

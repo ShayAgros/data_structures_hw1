@@ -44,7 +44,7 @@ public:
 	//			The object if it exists in the hash table.
 	// Throws ->
 	//			HashNotAMemberException if the object does not exist in the table
-	ValueType& find(const KeyType &key) {
+	ValueType* find(const KeyType &key) {
 		int index = _HashFunc(key, _size);
 		Linked_List<KeyType, ValueType>* list = _table[index];
 		if (!(list->doesExist(key))) {
@@ -72,7 +72,7 @@ public:
 	// Throws ->
 	//			HashAlreadyMemberException - if the object as already been added.
 	//			HashAllocationException - if an alllocation failed.
-	void insert(const KeyType &key, const ValueType &value) {
+	void insert(const KeyType &key, ValueType* value) {
 		if (doesExist(key)) {
 			throw HashAlreadyMemberException();
 		}
@@ -105,6 +105,26 @@ public:
 		_sum_of_obj--;
 		if ((_sum_of_obj <= (_size / 4)) && (_size > DEFAULT_SIZE)) {
 			resizeTable(_size / 2);
+		}
+	}
+
+	void deleteAllElements() {
+		for (int i = 0; i < _size; i++) {
+			typename Linked_List<KeyType, ValueType>::iterator iter =
+				typename Linked_List<KeyType, ValueType>::iterator(_table[i]);
+
+			bool reached_end = false;
+			iter.Next();
+			// sum_of_obj?
+			while (!reached_end) {
+				try {
+					ValueType* value = iter.GetValue();
+					delete value;
+					iter.Next();
+				} catch (typename LinkedListClass::IterReachedEndException& exc) {
+					reached_end = true;
+				}
+			}
 		}
 	}
 
@@ -153,12 +173,10 @@ private:
 			iter.Next();
 			// sum_of_obj?
 			while (!reached_end) {
-				KeyType key;
-				ValueType value;
 				int new_index;
 				try {
-					key = *iter;
-					value = iter.GetValue();
+					KeyType key = *iter;
+					ValueType* value = iter.GetValue();
 					new_index = _HashFunc(key, new_size);
 					iter.Next();
 					new_table[new_index]->insert(key, value);

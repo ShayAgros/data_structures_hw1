@@ -24,7 +24,7 @@ void Oasis::init(int n, int* clan_ids) {
 
 	for (int i = 0; i < size; i++) {
 		int clan_id = can_fight_clans_array[i]->getData();
-		_clans->insert(clan_id, Clan(clan_id, can_fight_clans_array[i]));
+		_clans->insert(clan_id, new Clan(clan_id, can_fight_clans_array[i]));
 	}
 }
 
@@ -36,11 +36,11 @@ void Oasis::addClan(int clan_id) {
 		throw Hash<int, Clan>::HashAlreadyMemberException();
 	}
 	MinHeap<int>::Node* min_heap_node = _can_fight_clans->insert(clan_id);
-	_clans->insert(clan_id, Clan(clan_id, min_heap_node));
+	_clans->insert(clan_id, new Clan(clan_id, min_heap_node));
 }
 
 void Oasis::addPlayer(int player_id, int score, int clan_id) {
-	if (player_id < 0 && score < 0 && clan_id < 0) {
+	if (player_id < 0 || score < 0 || clan_id < 0) {
 		throw InvalidInputException();
 	}
 	try {
@@ -54,8 +54,8 @@ void Oasis::addPlayer(int player_id, int score, int clan_id) {
 	}
 
 	_players_by_id->insertNode(player_id);
-	Clan& clan = _clans->find(clan_id);
-	clan.addPlayer(player_id, score);
+	Clan* clan = _clans->find(clan_id);
+	clan->addPlayer(player_id, score);
 }
 
 void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
@@ -66,24 +66,24 @@ void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
 	if (!_clans->doesExist(clan_id1) || !_clans->doesExist(clan_id2))
 		throw ClanDoesNotExistException();
 
-	Clan& clan1 = _clans->find(clan_id1);
-	Clan& clan2 = _clans->find(clan_id2);
+	Clan* clan1 = _clans->find(clan_id1);
+	Clan* clan2 = _clans->find(clan_id2);
 
 
-	if (!clan1.canFight() || !clan2.canFight())
+	if (!clan1->canFight() || !clan2->canFight())
 		throw ClanCantFightException();
 
-	if (clan1.getSize() < k1 || clan2.getSize() < k2)
+	if (clan1->getSize() < k1 || clan2->getSize() < k2)
 		throw ClanDoesntHaveEnoughPlayersException();
 
-	k1_grade = clan1.getStrongest(k1);
-	k2_grade = clan2.getStrongest(k2);
+	k1_grade = clan1->getStrongest(k1);
+	k2_grade = clan2->getStrongest(k2);
 
 	if (k1_grade == k2_grade) {
-		losing_clan = (clan_id2 < clan_id1) ? &clan1 : &clan2;
+		losing_clan = (clan_id2 < clan_id1) ? clan1 : clan2;
 	}
 	else {
-		losing_clan = (k2_grade < k1_grade) ? &clan2 : &clan1;
+		losing_clan = (k2_grade < k1_grade) ? clan2 : clan1;
 	}
 
 	losing_clan->setClanLost();	
@@ -108,6 +108,7 @@ int Oasis::getMinClan() {
 }
 
 void Oasis::quit() {
+	_clans->deleteAllElements();
 	delete _clans;
 	delete _players_by_id;
 	delete _can_fight_clans;	

@@ -41,19 +41,19 @@ bool hashTableTest() {
 		if (hash.doesExist(MyInt(i))) {
 			return false;
 		}
-		hash.insert(MyInt(i), MyDouble(i));
+		hash.insert(MyInt(i), new MyDouble(i));
 		if (!hash.doesExist(MyInt(i))) {
 			return false;
 		}
 	}
 
 	for (int i = 0; i < 100; i++) {
-		MyDouble d = hash.find(MyInt(i));
-		if ((int)d.x != i) {
+		MyDouble* d = hash.find(MyInt(i));
+		if ((int)d->x != i) {
 			return false;
 		}
 		try {
-			MyDouble d2 = hash.find(MyInt(i+100));
+			MyDouble* d2 = hash.find(MyInt(i+100));
 			return false;
 		} catch (const Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
 
@@ -63,7 +63,7 @@ bool hashTableTest() {
 
 	for (int i = 0; i < 100; i++) {
 		try {
-			hash.insert(MyInt(i), MyDouble(i));
+			hash.insert(MyInt(i), new MyDouble(i));
 			return false;
 		} catch (const Hash<MyInt, MyDouble>::HashAlreadyMemberException& ex) {
 			
