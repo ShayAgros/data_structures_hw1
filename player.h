@@ -9,11 +9,11 @@ class Player {
 
     int _id;
     int _score;
-	int _clanID;
+	int _clan_id;
 
     public:
-    Player(int _id,int _score, int ClandID) : _id(_id), _score(_score),
-		_clanID(ClandID) {}
+    Player(int id,int score, int clan_id) : _id(id), _score(score),
+		_clan_id(clan_id) {}
 
     int getID();
 
@@ -26,11 +26,11 @@ class Player {
 
     class CompareByScore {
 	public:
-	bool operator() (Player *p1, Player *p2) {
-		if (p1->_score == p2->_score) {
-			return (p1->_id < p2->_id);
+	bool operator() (const Player& p1, const Player& p2) {
+		if (p1._score == p2._score) {
+			return (p1._id < p2._id);
 		}		
-	    return (p1->_score > p2->_score);
+	    return (p1._score > p2._score);
     	}
     };
 

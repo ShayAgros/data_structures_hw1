@@ -9,33 +9,33 @@ int moduloHash(int key, int size) {
 Oasis::Oasis() : _clans(moduloHash) {}
 
 
-void Oasis::init(int n, int* clanIDs) {
+void Oasis::init(int n, int* clan_ids) {
 
-	_can_fight_clans.MakeHeap(n, clanIDs);
+	_can_fight_clans.MakeHeap(n, clan_ids);
 
 	MinHeap<int>::Node** can_fight_clans_array = _can_fight_clans.toArray();
 
 	int size = _can_fight_clans.getSize();
 
 	for (int i = 0; i < size; i++) {
-		int _clanID = can_fight_clans_array[i]->getData();
-		_clans.insert(_clanID, Clan(_clanID, can_fight_clans_array[i]));
+		int clan_id = can_fight_clans_array[i]->getData();
+		_clans.insert(clan_id, Clan(clan_id, can_fight_clans_array[i]));
 	}
 }
 
-void Oasis::addClan(int _clanID) {
-	if (_clanID < 0) {
+void Oasis::addClan(int clan_id) {
+	if (clan_id < 0) {
 		throw InvalidInputException();
 	}
-	if (_clans.doesExist(_clanID)) {
+	if (_clans.doesExist(clan_id)) {
 		throw Hash<int, Clan>::HashAlreadyMemberException();
 	}
-	MinHeap<int>::Node* min_heap_node = _can_fight_clans.insert(_clanID);
-	_clans.insert(_clanID, Clan(_clanID, min_heap_node));
+	MinHeap<int>::Node* min_heap_node = _can_fight_clans.insert(clan_id);
+	_clans.insert(clan_id, Clan(clan_id, min_heap_node));
 }
 
-void Oasis::addPlayer(int playerID, int _score, int _clanID) {
-	if (playerID < 0 && _score < 0 && _clanID < 0) {
+void Oasis::addPlayer(int player_id, int score, int clan_id) {
+	if (player_id < 0 && score < 0 && clan_id < 0) {
 		throw InvalidInputException();
 	}
 }

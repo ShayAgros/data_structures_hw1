@@ -15,11 +15,11 @@ public:
 	Oasis();
 	~Oasis() {}
 
-	void init(int n, int* clanIDs);
+	void init(int n, int* clan_ids);
 
-	void addClan(int _clanID);
+	void addClan(int clan_id);
 
-	void addPlayer(int playerID, int _score, int _clanID);
+	void addPlayer(int player_id, int score, int clan_id);
 
 	void clanFight(int clan1, int clan2, int k1, int k2);
 
@@ -29,7 +29,7 @@ public:
 
 private:
 	Hash<int, Clan> _clans;
-	AvlTree<Player, Player::CompareByID> _players;
+	AvlTree<int> _players_id;
 	MinHeap<int> _can_fight_clans;
 
 	class InvalidInputException {};

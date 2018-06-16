@@ -7,7 +7,7 @@
 
 namespace hw1 {
 
-typedef AvlTree<Player*, Player::CompareByScore> Players_Tree;
+typedef AvlTree<Player, Player::CompareByScore> Players_Tree;
 
 class Clan {
 
@@ -26,7 +26,7 @@ public:
 
 	~Clan() {}
 
-	void addPlayer(Player *player);
+	void addPlayer(int player_id, int score);
 
 	class memoryAllocFailure {};
 };

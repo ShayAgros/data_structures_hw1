@@ -11,7 +11,7 @@ namespace hw1 {
     }
 
 	int Player::getClanID() {
-		return this->_clanID;
+		return this->_clan_id;
 	}
 
 
