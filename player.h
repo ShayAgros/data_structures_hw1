@@ -43,8 +43,8 @@ class Player {
 
     class GetScore {
     public:
-	bool operator() (Player *p1) {
-		return p1->getScore();
+	bool operator() (Player& p1) {
+		return p1.getScore();
 	}
     };
 
