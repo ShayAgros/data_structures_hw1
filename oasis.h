@@ -10,10 +10,12 @@
 namespace hw1 {
 
 class Oasis {
+private:
+	Hash<int, Clan>* _clans;
+	AvlTree<int>* _players_by_id;
+	MinHeap<int>* _can_fight_clans;
 
-	Hash<int, Clan> _clans;
-	AvlTree<int> _players_by_ID;
-	MinHeap<int> _can_fight_clans;
+	void deleteLostClanFromHeap(Clan* clan);
 
 public:
 
@@ -32,10 +34,13 @@ public:
 
 	void quit();
 
+
 	class InvalidInputException {};
-	class clanDosntExist {} ;
-	class clanDoesntHaveEnoughPlayers {};
-	class clanCantFight {};
+	class ClanDoesntHaveEnoughPlayersException {};
+	class ClanCantFightException {};
+	class PlayerAlreadyExistsException {};
+	class ClanDoesNotExistException {};
+	class GotNoCanFightClansException {};
 
 };
 

@@ -16,8 +16,8 @@ using std::endl;
 // TODO: add node's size update after deletion 
 namespace hw1 {
 
-template < typename T >
-class emptyGetGrade {
+template <typename T>
+class EmptyGetGrade {
 
     public:
 	int operator() (T& obj) {
@@ -25,7 +25,7 @@ class emptyGetGrade {
 	}
 };
 
-template  <typename T, typename Compare=std::less<T>,typename GetGrade=emptyGetGrade<T>>
+template  <typename T, typename Compare=std::less<T>,typename GetGrade=EmptyGetGrade<T> >
 class AvlTree {
 
     class Node {
@@ -38,7 +38,7 @@ class AvlTree {
 	Node *father;
 	Node *left_child, *right_child;
 	int height;
-	int size ;
+	int size;
 	int subtree_grade;
 
 

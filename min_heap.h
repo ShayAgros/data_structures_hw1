@@ -161,7 +161,11 @@ public:
 		return _heap[new_element_index];
 	}
 
-	void decKey(int index, const T& value) {
+	void decKey(Node* element, const T& value) {
+		int index = element->getIndex();
+		if (index < 0 || index > _size) {
+			throw HeapOutOfBandException();
+		}
 		if (_compare(value, _heap[index]->getData())) {
 			_heap[index]->setData(value);
 		}
@@ -170,7 +174,7 @@ public:
 
 	void delMin() {
 		if (_size == 0) {
-			return;
+			throw EmptyHeapException();
 		}
 		delete _heap[0];
 		_heap[0] = _heap[_size - 1];
@@ -183,6 +187,9 @@ public:
 	}
 
 	const T& findMin() {
+		if (_size == 0) {
+			throw EmptyHeapException();
+		}
 		return _heap[0]->getData();
 	}
 
@@ -196,6 +203,7 @@ public:
 	
 	class HeapOutOfBandException {};
 	class HeapAlreadyExistsException {};
+	class EmptyHeapException {};
 
 
 }; /* end class MinHeap */

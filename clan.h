@@ -10,7 +10,7 @@ namespace hw1 {
 typedef AvlTree<Player, Player::CompareByScore ,Player::GetScore > Players_Tree;
 
 class Clan {
-
+private:
 	int _id;
 	bool _can_fight;
 	Players_Tree _players_by_score;
@@ -42,6 +42,11 @@ public:
 		* returns 'true' if so
 		*/
 	bool canFight();
+
+	/*
+		Returns the node which represents this clan in the min heap of _can_fight_clans in oasis.
+	*/
+	MinHeap<int>::Node* getMinHeapNode();
 
 	class memoryAllocFailure {};
 };

@@ -83,11 +83,11 @@ StatusType clanFight(void *DS,int clan1, int clan2, int k1, int k2) {
 
     } catch (std::bad_alloc& ex) {
 	return ALLOCATION_ERROR;
-    } catch (Oasis::clanDosntExist& exc) {
+    } catch (Oasis::ClanDoesNotExistException& exc) {
 	return FAILURE;
-    } catch ( Oasis::clanCantFight& exc) {
+    } catch ( Oasis::ClanCantFightException& exc) {
 	return FAILURE;
-    } catch (Oasis::clanDoesntHaveEnoughPlayers& exc) {
+    } catch (Oasis::ClanDoesntHaveEnoughPlayersException& exc) {
 	return FAILURE;
     } 
     return SUCCESS;

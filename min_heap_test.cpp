@@ -13,9 +13,10 @@ using std::ostream;
 
 bool heapMakeHeapTest() {
 	int nums[] = {5,1,2,4,3};
-	MinHeap<int> min_heap;
+	MinHeap<int> min_heap;	
 	min_heap.MakeHeap(5, nums);
-	min_heap.decKey(0, -10);
+	MinHeap<int>::Node** min_heap_nodes_as_array = min_heap.toArray();
+	min_heap.decKey(min_heap_nodes_as_array[0], -10);
 	return min_heap.findMin() == -10;
 }
 
@@ -40,10 +41,11 @@ bool heapInsertDeleteTest() {
 	return true;
 }
 
+/**
 int main() {
 
 	RUN_TEST(heapMakeHeapTest);
 	RUN_TEST(heapInsertDeleteTest);
 
 	return 0;
-}
+}*/

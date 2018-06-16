@@ -9,46 +9,40 @@ class Player {
 
     int _id;
     int _score;
-    int _clan_id;
+	int _clan_id;
 
     public:
     Player(int id,int score, int clan_id) : _id(id), _score(score),
 		_clan_id(clan_id) {}
 
-    int getID();
+    int getID() const;
 
-    int getScore();
+    int getScore() const;
 
-    int getClanID();
+	int getClanID() const;
 
     ~Player() = default;
 
 
     class CompareByScore {
 	public:
-	bool operator() (const Player& p1, const Player& p2) {
-		if (p1._score == p2._score) {
-			return (p1._id < p2._id);
-		}		
-		return (p1._score > p2._score);
-	}
+		bool operator() (const Player& p1, const Player& p2) {
+			if (p1._score == p2._score) {
+				return (p1._id < p2._id);
+			}		
+			return (p1._score > p2._score);
+		}
     };
 
-    class CompareByID {
-    public:
-	bool operator() (Player *p1, Player *p2) {
-		return (p1->_id < p2->_id);
-	}
-    };
-
-    class GetScore {
-    public:
-	bool operator() (Player& p1) {
-		return p1.getScore();
-	}
-    };
-
+	class GetScore {
+	public:
+		int operator() (const Player& p1) {
+			return p1.getScore();
+		}
+	};
 };
+
+
 
 
 } // end namespace
