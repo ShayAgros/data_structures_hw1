@@ -7,7 +7,7 @@
 #include "min_heap.h"
 #include "avl.h"
 
-namespace hw1 {
+namespace hw2 {
 
 class Oasis {
 private:

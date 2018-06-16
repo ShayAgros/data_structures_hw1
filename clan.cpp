@@ -1,6 +1,6 @@
 #include "clan.h"
 
-namespace hw1 {
+namespace hw2 {
 
 void Clan::addPlayer(int player_id, int score) {
 	try {

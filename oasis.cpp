@@ -1,7 +1,7 @@
 #include "oasis.h"
 
-using hw1::Oasis;
-using hw1::Clan;
+using hw2::Oasis;
+using hw2::Clan;
 
 int moduloHash(int key, int size) {
 	return key % size;

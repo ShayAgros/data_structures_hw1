@@ -13,7 +13,7 @@
 
 #define HEAP_DEAFULT_SIZE 2
 
-namespace hw1 {
+namespace hw2 {
 
 template  <typename T, typename Compare=std::less<T>>
 class MinHeap {

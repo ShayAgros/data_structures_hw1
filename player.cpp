@@ -1,6 +1,6 @@
 #include "player.h"
 
-namespace hw1 {
+namespace hw2 {
 
 	int Player::getID() const {
 		return this->_id;

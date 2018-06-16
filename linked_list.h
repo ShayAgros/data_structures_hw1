@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <exception>
 
-namespace hw1 {
+namespace hw2 {
 
 template<typename KeyType, typename ValueType>
 class Linked_List {

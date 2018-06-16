@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-using hw1::Hash;
+using hw2::Hash;
 
 #define RUN_TEST(b)	if( (b)() ) std::cout << #b << ": [PASS]" << std::endl; \
 						else std::cout << #b <<  ": [FAIL]" << std::endl;

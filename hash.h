@@ -4,7 +4,7 @@
 #include "linked_list.h"
 #include <exception>
 
-namespace hw1 {
+namespace hw2 {
 
 const static int NOT_FOUND = -1;
 const static int DEFAULT_SIZE = 8;

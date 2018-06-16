@@ -14,7 +14,7 @@ using std::ostream;
 using std::endl;
 
 // TODO: add node's size update after deletion 
-namespace hw1 {
+namespace hw2 {
 
 template <typename T>
 class EmptyGetGrade {

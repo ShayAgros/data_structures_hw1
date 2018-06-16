@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "avl.h"
 
-using hw1::AvlTree;
+using hw2::AvlTree;
 using std::ostream;
 
 #define RUN_TEST(b)	if( (b)() ) std::cout << #b << ": [PASS]" << std::endl; \

@@ -5,7 +5,7 @@
 #include "player.h"
 #include "min_heap.h"
 
-namespace hw1 {
+namespace hw2 {
 
 typedef AvlTree<Player, Player::CompareByScore ,Player::GetScore > Players_Tree;
 

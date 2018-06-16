@@ -3,7 +3,7 @@
 #include "hash.h"
 #include "clan.h"
 
-using namespace hw1;
+using namespace hw2;
 
 void* init(int n,int *clanIDs) {
 

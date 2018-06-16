@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-using hw1::MinHeap;
+using hw2::MinHeap;
 using std::ostream;
 
 #define RUN_TEST(b)	if( (b)() ) std::cout << #b << ": [PASS]" << std::endl; \
