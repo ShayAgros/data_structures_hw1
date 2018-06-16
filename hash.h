@@ -44,7 +44,7 @@ public:
 	//			The object if it exists in the hash table.
 	// Throws ->
 	//			HashNotAMemberException if the object does not exist in the table
-	ValueType find(const KeyType &key) const {
+	ValueType& find(const KeyType &key) {
 		int index = _HashFunc(key, _size);
 		Linked_List<KeyType, ValueType>* list = _table[index];
 		if (!(list->doesExist(key))) {

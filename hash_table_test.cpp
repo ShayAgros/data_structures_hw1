@@ -1,5 +1,4 @@
 #include "hash.h"
-
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
@@ -54,9 +53,9 @@ bool hashTableTest() {
 			return false;
 		}
 		try {
-			hash.find(MyInt(i+100));
+			MyDouble d2 = hash.find(MyInt(i+100));
 			return false;
-		} catch (Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
+		} catch (const Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
 
 		}
 
@@ -66,7 +65,7 @@ bool hashTableTest() {
 		try {
 			hash.insert(MyInt(i), MyDouble(i));
 			return false;
-		} catch (Hash<MyInt, MyDouble>::HashAlreadyMemberException& ex) {
+		} catch (const Hash<MyInt, MyDouble>::HashAlreadyMemberException& ex) {
 			
 		}
 		
@@ -81,46 +80,17 @@ bool hashTableTest() {
 		try {
 			hash.remove(MyInt(i));
 			return false;
-		} catch (Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
+		} catch (const Hash<MyInt, MyDouble>::HashNotAMemberException& ex) {
 
 		}
 	}
 
 	return true;
 }
-
-class Test {
-public:
-	int** arr;
-
-	Test() {
-		arr = new int*[5];
-		for (int i = 0; i < 5; i++) {
-			arr[i] = new int(i);
-		}
-	}
-
-	int** toArray() {
-		int** arr2 = new int*[5];
-		for (int i = 0; i < 5; i++) {
-			arr2[i] = arr[i];
-		}
-		return arr2;
-	}
-
-	void a() {
-		arr[0] = new int(6);
-	}
-};
-
-
+/**
 int main() {
 
-	//RUN_TEST(hashTableTest);
+	RUN_TEST(hashTableTest);
 
-	Test t;
-	int** arr = t.toArray();
-	t.a();
-
-	return 0;
 }
+*/

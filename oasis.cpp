@@ -44,7 +44,7 @@ void Oasis::addPlayer(int player_id, int score, int clan_id) {
 		throw InvalidInputException();
 	}
 	try {
-		int player_id_instance = _players_by_id->findValCopyInTree(player_id);
+		_players_by_id->findValCopyInTree(player_id);
 		throw PlayerAlreadyExistsException();
 	} catch (const AvlTree<int>::NodeDoesntExist& exc) {
 	}
@@ -54,7 +54,7 @@ void Oasis::addPlayer(int player_id, int score, int clan_id) {
 	}
 
 	_players_by_id->insertNode(player_id);
-	Clan clan = _clans->find(clan_id);
+	Clan& clan = _clans->find(clan_id);
 	clan.addPlayer(player_id, score);
 }
 
@@ -66,8 +66,8 @@ void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
 	if (!_clans->doesExist(clan_id1) || !_clans->doesExist(clan_id2))
 		throw ClanDoesNotExistException();
 
-	Clan clan1 = _clans->find(clan_id1);
-	Clan clan2 = _clans->find(clan_id2);
+	Clan& clan1 = _clans->find(clan_id1);
+	Clan& clan2 = _clans->find(clan_id2);
 
 
 	if (!clan1.canFight() || !clan2.canFight())
@@ -80,7 +80,7 @@ void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
 	k2_grade = clan2.getStrongest(k2);
 
 	if (k1_grade == k2_grade) {
-		losing_clan = (clan_id2 < clan_id1) ? &clan2 : &clan1;
+		losing_clan = (clan_id2 < clan_id1) ? &clan1 : &clan2;
 	}
 	else {
 		losing_clan = (k2_grade < k1_grade) ? &clan2 : &clan1;

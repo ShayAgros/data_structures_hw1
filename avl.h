@@ -544,6 +544,7 @@ public:
 	    /*empty tree*/
 	    root = new_node;
 	    left_most = root;
+		root->update_grade();
 	    return;
 	}
 

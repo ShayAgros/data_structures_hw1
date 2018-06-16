@@ -38,7 +38,7 @@ protected:
 		}
 
 		// Returns the value of the node
-		ValueType const& GetValue() const {
+		ValueType& GetValue() {
 			return m_value;
 		}
 
@@ -219,7 +219,7 @@ public:
 	//			the value of the node with the given key.
 	// Throws ->
 	//			LIST_KEY_DOESNT_EXIST - if a node with the given key does not exist.
-	ValueType find(const KeyType &key) const {
+	ValueType& find(const KeyType &key) {
 
 		if (!doesExist(key)) {
 			throw ListKeyDoesntExistException();

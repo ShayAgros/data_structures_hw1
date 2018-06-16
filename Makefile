@@ -6,18 +6,16 @@ OUTPUT=oasis
 all: $(OUTPUT)
 
 OBJ= avl.h oasis.cpp clan.cpp player.cpp hash.h \
-     linked_list.h min_heap.h
+     linked_list.h min_heap.h library2.cpp
 	
 
-CFLAGS = -std=c++11 -g
+CFLAGS = -std=c++0x -DNDEBUG -Wall
 
-$(OUTPUT): main1.cpp $(OBJ)
+$(OUTPUT): main2.cpp $(OBJ)
 	g++ $(CFLAGS) -o $@ $^
 
 test: $(OBJ)
 	g++ $(CFLAGS) -o test_avl $^ avl_test.cpp
-	g++ $(CFLAGS) -o test_hash $^ hash_table_test.cpp
-	g++ $(CFLAGS) -o test_heap $^ min_heap_test.cpp
 
 .PHONY: clean
 clean:
