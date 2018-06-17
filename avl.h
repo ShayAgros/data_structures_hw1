@@ -13,7 +13,6 @@
 using std::ostream;
 using std::endl;
 
-// TODO: add node's size update after deletion 
 namespace hw2 {
 
 template <typename T>
@@ -777,7 +776,7 @@ public:
     friend ostream& operator<<(ostream& os,const AvlTree<K,C>& tree);
 
 
-    // Exceptions TODO: check neccessity
+    // Exceptions
     class NodeExists {};
     class RootNodeExists {};
     class NodeDoesntExist{};

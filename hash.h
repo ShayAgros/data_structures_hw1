@@ -115,7 +115,6 @@ public:
 
 			bool reached_end = false;
 			iter.Next();
-			// sum_of_obj?
 			while (!reached_end) {
 				try {
 					ValueType* value = iter.GetValue();
@@ -171,7 +170,6 @@ private:
 
 			bool reached_end = false;
 			iter.Next();
-			// sum_of_obj?
 			while (!reached_end) {
 				int new_index;
 				try {
