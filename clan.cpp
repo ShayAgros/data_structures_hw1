@@ -20,7 +20,9 @@ int Clan::getStrongest(int k) {
 }
 
 void Clan::setClanLost() {
-	_can_fight = false ;
+	_can_fight = false;
+	_min_heap_node = NULL;
+
 }
 
 bool Clan::canFight() {

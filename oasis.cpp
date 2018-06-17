@@ -85,10 +85,9 @@ void Oasis::clanFight(int clan_id1, int clan_id2, int k1, int k2) {
 	else {
 		losing_clan = (k2_grade < k1_grade) ? clan2 : clan1;
 	}
-
-	losing_clan->setClanLost();	
-
+	
 	deleteLostClanFromHeap(losing_clan);
+	losing_clan->setClanLost();
 }
 
 void Oasis::deleteLostClanFromHeap(Clan* clan) {
